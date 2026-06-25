@@ -32,7 +32,12 @@ export default function Register() {
       setSuccess(true);
       setSuccessMessage(res.message || 'Registration successful. Please check your email to verify your account.');
     } catch (err) {
-      setError(err.message || 'Registration failed. Email or Username may already be in use.');
+      if (err.errors && Array.isArray(err.errors)) {
+        const validationMsg = err.errors.map(e => e.message).join(', ');
+        setError(validationMsg);
+      } else {
+        setError(err.message || 'Registration failed. Email or Username may already be in use.');
+      }
     } finally {
       setLoading(false);
     }

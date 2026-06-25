@@ -211,6 +211,19 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const resendVerificationEmail = async (email) => {
+    try {
+      const response = await apiRequest('/auth/resend-verification', {
+        method: 'POST',
+        body: { email }
+      });
+      return response;
+    } catch (error) {
+      console.error('[Resend Verification Error]', error.message);
+      throw error;
+    }
+  };
+
   const logoutUser = () => {
     setUser(null);
     localStorage.removeItem('cv_user');
@@ -458,6 +471,7 @@ export const AppProvider = ({ children }) => {
       adminStats,
       loginUser,
       registerUser,
+      resendVerificationEmail,
       logoutUser,
       toggleWatchlist,
       handleBuy,

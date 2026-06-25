@@ -132,7 +132,7 @@ export default function App() {
               <Route path="/market" element={<Market />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/watchlist" element={<Watchlist />} />
-              <Route path="/coin/:coinId" element={<CoinDetails />} />
+              <Route path="/coin/:id" element={<CoinDetails />} />
               <Route path="/ai-assistant" element={<AIAssistant />} />
               <Route path="/ai-analyzer" element={<AIPortfolioAnalyzer />} />
               <Route path="/alerts" element={<Alerts />} />

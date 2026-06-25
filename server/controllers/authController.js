@@ -13,7 +13,7 @@ const generateToken = (id) => {
 
 /**
  * @route   POST /api/v1/auth/register
- * @desc    Register a new user (requires email verification)
+ * @desc    Register a new user (requires email verification unless bypassed in development)
  * @access  Public
  */
 export const registerUser = async (req, res, next) => {
@@ -28,6 +28,9 @@ export const registerUser = async (req, res, next) => {
       return errorResponse(res, 400, 'User with this email or username already exists');
     }
 
+    // Check if verification is bypassed in development mode
+    const bypassVerification = process.env.BYPASS_EMAIL_VERIFICATION === 'true' || process.env.NODE_ENV === 'development';
+
     // Generate email verification token
     const verificationToken = crypto.randomBytes(20).toString('hex');
     const verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
@@ -38,10 +41,14 @@ export const registerUser = async (req, res, next) => {
       username,
       email: email.toLowerCase(),
       password,
-      isVerified: false,
-      verificationToken,
-      verificationTokenExpire
+      isVerified: bypassVerification, // Set true directly if bypassed
+      verificationToken: bypassVerification ? undefined : verificationToken,
+      verificationTokenExpire: bypassVerification ? undefined : verificationTokenExpire
     });
+
+    if (bypassVerification) {
+      return successResponse(res, 201, 'Registration successful. Account activated and ready to log in.');
+    }
 
     // Verification URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -118,6 +125,74 @@ export const verifyEmail = async (req, res, next) => {
 };
 
 /**
+ * @route   POST /api/v1/auth/resend-verification
+ * @desc    Resend email verification token
+ * @access  Public
+ */
+export const resendVerificationEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return errorResponse(res, 400, 'Please provide an email address');
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      return errorResponse(res, 404, 'No account found with this email address');
+    }
+
+    if (user.isVerified) {
+      return errorResponse(res, 400, 'This account is already verified');
+    }
+
+    // Generate new email verification token
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+    const verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpire = verificationTokenExpire;
+    await user.save();
+
+    // Verification URL
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const verifyUrl = `${frontendUrl}/verify-email/${verificationToken}`;
+
+    // Email message
+    const message = `Please verify your email by clicking the link below:\n\n${verifyUrl}\n\nThis link is valid for 24 hours.`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h2 style="color: #4f46e5; text-align: center;">CryptoVision Email Verification</h2>
+        <p>Hi ${user.name || user.username},</p>
+        <p>Please click the button below to verify your email address and activate your account:</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verifyUrl}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verify Email Address</a>
+        </div>
+        <p style="color: #666; font-size: 12px;">If the button above doesn't work, copy and paste this link into your browser:</p>
+        <p style="color: #4f46e5; font-size: 12px; word-break: break-all;">${verifyUrl}</p>
+      </div>
+    `;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'CryptoVision Email Verification Request',
+        message,
+        html
+      });
+
+      return successResponse(res, 200, 'Verification email sent successfully.');
+    } catch (err) {
+      console.error('[Resend Email Error]', err);
+      return errorResponse(res, 500, 'Verification email could not be sent.');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @route   POST /api/v1/auth/login
  * @desc    Authenticate user, check verification status & get token
  * @access  Public
@@ -144,8 +219,9 @@ export const loginUser = async (req, res, next) => {
       return errorResponse(res, 401, 'Invalid email/username or password');
     }
 
-    // Check if email is verified
-    if (!user.isVerified) {
+    // Check if email is verified (bypass in dev mode)
+    const bypassVerification = process.env.BYPASS_EMAIL_VERIFICATION === 'true' || process.env.NODE_ENV === 'development';
+    if (!user.isVerified && !bypassVerification) {
       return errorResponse(res, 403, 'Your email is not verified. Please verify your email before logging in.');
     }
 
@@ -180,7 +256,6 @@ export const forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      // To prevent account enumeration, we can return success but log internally
       return successResponse(res, 200, 'If this email exists in our records, a reset link has been sent.');
     }
 

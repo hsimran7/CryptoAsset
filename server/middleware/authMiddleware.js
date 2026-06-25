@@ -42,7 +42,7 @@ export const protect = async (req, res, next) => {
  * Middleware wrapper restricting endpoints only to user role: ADMIN
  */
 export const adminOnly = (req, res, next) => {
-  if (req.user && req.user.role === 'ADMIN') {
+  if (req.user && req.user.role && req.user.role.toUpperCase() === 'ADMIN') {
     next();
   } else {
     return errorResponse(res, 403, 'Permission Denied: Admin privileges required');

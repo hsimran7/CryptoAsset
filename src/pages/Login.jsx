@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Eye, LogIn, User, Lock, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, LogIn, User, Lock, Sparkles, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
-  const { loginUser } = useApp();
+  const { loginUser, resendVerificationEmail } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState('');
   
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleResendVerification = async () => {
+    let email = username.trim();
+    if (!email || !email.includes('@')) {
+      setError('Please enter your email address in the field above to resend verification.');
+      return;
+    }
+
+    setResending(true);
+    setError('');
+    setResendSuccess('');
+    try {
+      const res = await resendVerificationEmail(email);
+      setResendSuccess(res.message || 'Verification email resent successfully! Please check your inbox.');
+    } catch (err) {
+      setError(err.message || 'Failed to resend verification email.');
+    } finally {
+      setResending(false);
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -36,7 +58,12 @@ export default function Login() {
       await loginUser(username, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Invalid credentials or unverified email.');
+      if (err.errors && Array.isArray(err.errors)) {
+        const validationMsg = err.errors.map(e => e.message).join(', ');
+        setError(validationMsg);
+      } else {
+        setError(err.message || 'Invalid credentials or unverified email.');
+      }
     } finally {
       setLoading(false);
     }
@@ -70,9 +97,29 @@ export default function Login() {
 
         {/* Error message */}
         {error && (
-          <div className="mb-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs p-3 rounded-lg flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="mb-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs p-3 rounded-lg flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+            {error.includes('verified') && (
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                className="mt-1 self-start text-[10px] bg-white/5 hover:bg-white/10 text-indigo-300 py-1.5 px-3 rounded font-bold transition-all border border-indigo-500/20 active:scale-95"
+                disabled={resending}
+              >
+                {resending ? 'Resending...' : 'Resend Verification Email'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Resend success message */}
+        {resendSuccess && (
+          <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs p-3 rounded-lg flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>{resendSuccess}</span>
           </div>
         )}
 

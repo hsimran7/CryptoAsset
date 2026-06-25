@@ -3,6 +3,7 @@ import passport from 'passport';
 import {
   registerUser,
   verifyEmail,
+  resendVerificationEmail,
   loginUser,
   forgotPassword,
   resetPassword,
@@ -24,6 +25,7 @@ const router = express.Router();
 // Public routes (standard email auth + verification)
 router.post('/register', authLimiter, validate(registerSchema), registerUser);
 router.get('/verify-email/:token', verifyEmail);
+router.post('/resend-verification', authLimiter, resendVerificationEmail);
 router.post('/login', authLimiter, validate(loginSchema), loginUser);
 
 // Password recovery routes

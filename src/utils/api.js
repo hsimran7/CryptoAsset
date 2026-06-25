@@ -36,7 +36,9 @@ export const apiRequest = async (endpoint, options = {}) => {
   }
 
   if (!response.ok) {
-    throw new Error(responseData.message || 'API request failed');
+    const error = new Error(responseData.message || 'API request failed');
+    error.errors = responseData.errors; // Attach validation error array
+    throw error;
   }
 
   return responseData;
