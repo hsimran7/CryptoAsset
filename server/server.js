@@ -20,6 +20,8 @@ import healthRoutes from './routes/healthRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import watchlistRoutes from './routes/watchlistRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
+import assetPortfolioRoutes from './routes/assetPortfolioRoutes.js';
+import assetWatchlistRoutes from './routes/assetWatchlistRoutes.js';
 import alertsRoutes from './routes/alertsRoutes.js';
 import coinRoutes from './routes/coinRoutes.js';
 
@@ -62,6 +64,10 @@ app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/watchlist', watchlistRoutes);
 app.use('/api/v1/portfolio', portfolioRoutes);
+app.use('/api/portfolio', assetPortfolioRoutes);
+app.use('/api/v1/portfolio-assets', assetPortfolioRoutes);
+app.use('/api/watchlist', assetWatchlistRoutes);
+app.use('/api/v1/watchlist-items', assetWatchlistRoutes);
 app.use('/api/v1/alerts', alertsRoutes);
 
 // Base route fallback
@@ -86,7 +92,7 @@ const server = app.listen(PORT, () => {
 });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
+process.on('unhandledRejection', (err) => {
   console.error(`[Unhandled Rejection Error] details: ${err.message}`);
   // Close server & exit process
   server.close(() => process.exit(1));

@@ -5,10 +5,12 @@ import { Eye, CheckCircle2, XCircle, Loader2, ArrowRight } from 'lucide-react';
 
 export default function VerifyEmail() {
   const { token } = useParams();
-  const [status, setStatus] = useState('verifying'); // verifying, success, error
-  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState(token ? 'verifying' : 'error'); // verifying, success, error
+  const [message, setMessage] = useState(token ? '' : 'No verification token provided.');
 
   useEffect(() => {
+    if (!token) return;
+
     const verifyToken = async () => {
       try {
         const res = await apiRequest(`/auth/verify-email/${token}`);
@@ -20,12 +22,7 @@ export default function VerifyEmail() {
       }
     };
 
-    if (token) {
-      verifyToken();
-    } else {
-      setStatus('error');
-      setMessage('No verification token provided.');
-    }
+    verifyToken();
   }, [token]);
 
   return (

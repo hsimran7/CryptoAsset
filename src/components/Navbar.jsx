@@ -7,7 +7,6 @@ import {
   LogOut, 
   LogIn, 
   UserPlus, 
-  Check, 
   Sparkles,
   ArrowUpRight,
   ArrowDownRight,
@@ -18,7 +17,6 @@ import {
 export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
   const { user, coins, notifications, logoutUser, markNotificationAsRead, clearNotifications } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -28,20 +26,12 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  // Search filter implementation
-  useEffect(() => {
-    if (searchQuery.trim().length > 0) {
-      const filtered = coins.filter(
+  const searchResults = searchQuery.trim().length > 0
+    ? coins.filter(
         c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
              c.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
-      setSearchResults(filtered);
-      setShowSearchDropdown(true);
-    } else {
-      setSearchResults([]);
-      setShowSearchDropdown(false);
-    }
-  }, [searchQuery, coins]);
+      ).slice(0, 5)
+    : [];
 
   // Click outside handlers
   useEffect(() => {
@@ -88,7 +78,15 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
             type="text"
             placeholder="Search coin details, tickers, pairs..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowSearchDropdown(e.target.value.trim().length > 0);
+            }}
+            onFocus={() => {
+              if (searchQuery.trim().length > 0) {
+                setShowSearchDropdown(true);
+              }
+            }}
             className="w-full pl-9 pr-4 py-1.5 text-xs glass-input focus:ring-1 focus:ring-indigo-500"
           />
 

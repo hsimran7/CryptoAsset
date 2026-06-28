@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { 
-  Bell, 
   Trash2, 
   ToggleLeft, 
   ToggleRight, 
   Plus, 
   AlertCircle,
-  Activity,
-  CheckCircle2
+  Activity
 } from 'lucide-react';
 
 export default function Alerts() {
@@ -27,11 +25,12 @@ export default function Alerts() {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    const symbolParam = queryParams.get('symbol');
-    if (symbolParam) {
-      setSymbol(symbolParam);
+    const symbolParam = new URLSearchParams(location.search).get('symbol');
+    if (symbolParam && symbolParam !== symbol) {
+      const handle = setTimeout(() => setSymbol(symbolParam), 0);
+      return () => clearTimeout(handle);
     }
-  }, [location.search]);
+  }, [location.search, symbol]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

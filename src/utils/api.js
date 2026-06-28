@@ -31,7 +31,7 @@ export const apiRequest = async (endpoint, options = {}) => {
   let responseData;
   try {
     responseData = await response.json();
-  } catch (err) {
+  } catch {
     responseData = { success: false, message: 'Response parsing failed' };
   }
 

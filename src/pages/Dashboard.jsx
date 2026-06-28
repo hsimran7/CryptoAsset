@@ -11,8 +11,7 @@ import {
   ArrowUpRight, 
   ArrowDownRight,
   ChevronRight,
-  Briefcase,
-  AlertTriangle
+  Briefcase
 } from 'lucide-react';
 
 const MOCK_GROWTH_DATA = [
@@ -38,13 +37,6 @@ export default function Dashboard() {
   const topGainers = sortedCoins.slice(0, 3);
   const topLosers = [...sortedCoins].reverse().slice(0, 3);
 
-  // Compute current holdings total
-  let totalHoldingsVal = 0;
-  portfolio.holdings.forEach(holding => {
-    const coin = coins.find(c => c.symbol === holding.symbol);
-    const price = coin ? coin.price : 0;
-    totalHoldingsVal += holding.amount * price;
-  });
 
   return (
     <div className="space-y-6 text-left">

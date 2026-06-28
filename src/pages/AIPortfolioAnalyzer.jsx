@@ -3,12 +3,10 @@ import { useApp } from '../context/AppContext';
 import { 
   Sparkles, 
   ShieldAlert, 
-  Sliders, 
   CheckCircle, 
   AlertTriangle,
   Download,
   ArrowRight,
-  TrendingUp,
   FileCheck
 } from 'lucide-react';
 

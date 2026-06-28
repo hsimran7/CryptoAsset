@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider } from './context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Layout Components
@@ -32,7 +32,6 @@ import OAuthSuccess from './pages/OAuthSuccess';
 
 // Custom Route Wrapper for layout alignment
 function LayoutWrapper({ children }) {
-  const { user } = useApp();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();

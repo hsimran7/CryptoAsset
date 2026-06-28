@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
 import { apiRequest } from '../utils/api';
 import { Loader2 } from 'lucide-react';
 
 export default function OAuthSuccess() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginUser } = useApp();
 
   useEffect(() => {
     const handleOAuthSuccess = async () => {

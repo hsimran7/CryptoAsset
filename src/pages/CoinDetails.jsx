@@ -16,13 +16,24 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ShieldCheck,
-  TrendingUp,
   Compass,
   Loader2,
-  RefreshCw,
   Bell,
   Plus
 } from 'lucide-react';
+
+// Custom tooltips inside Recharts
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass-panel p-2.5 rounded-lg border border-white/10 text-xs font-mono text-left">
+        <p className="text-slate-400 mb-0.5">{payload[0].payload.time}</p>
+        <p className="text-white font-bold">${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function CoinDetails() {
   const { id } = useParams();
@@ -60,8 +71,7 @@ export default function CoinDetails() {
   // 2. Query Historical chart data
   const {
     data: chartData = [],
-    isLoading: isChartLoading,
-    refetch: refetchChart
+    isLoading: isChartLoading
   } = useQuery({
     queryKey: ['coinChart', id, days],
     queryFn: async () => {
@@ -117,18 +127,6 @@ export default function CoinDetails() {
   const holdingAmount = currentHolding ? currentHolding.amount : 0;
   const estCost = tradeAmount ? (parseFloat(tradeAmount) * coin.price) : 0;
 
-  // Custom tooltips inside Recharts
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="glass-panel p-2.5 rounded-lg border border-white/10 text-xs font-mono text-left">
-          <p className="text-slate-400 mb-0.5">{payload[0].payload.time}</p>
-          <p className="text-white font-bold">${payload[0].value.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const handleTradeSubmit = (e) => {
     e.preventDefault();

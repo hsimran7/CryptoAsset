@@ -247,7 +247,7 @@ export const getCoinChart = async (req, res, next) => {
       const chartPoints = rawPrices.map(([timestamp, val]) => {
         const dateObj = new Date(timestamp);
         // Clean formats depending on days filter
-        let label = '';
+        let label;
         if (days === '1' || days === 1) {
           label = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } else if (days === '7' || days === '30') {

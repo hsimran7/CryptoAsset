@@ -12,7 +12,7 @@ export const notFoundHandler = (req, res, next) => {
 /**
  * Global Express exception handling interceptor
  */
-export const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, _next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';
   let errors = null;

@@ -12,8 +12,7 @@ import {
   ChevronRight,
   RefreshCw,
   XCircle,
-  TrendingUp,
-  AlertCircle
+  TrendingUp
 } from 'lucide-react';
 
 export default function Market() {

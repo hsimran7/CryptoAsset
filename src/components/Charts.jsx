@@ -14,7 +14,6 @@ export const Sparkline = ({ data = [], isPositive = true, width = 120, height = 
   }).join(' ');
 
   const strokeColor = isPositive ? '#10b981' : '#f43f5e';
-  const shadowColor = isPositive ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.2)';
 
   return (
     <svg width={width} height={height} className="overflow-visible">
@@ -317,13 +316,12 @@ export const PortfolioAllocationChart = ({ holdings = [], size = 200 }) => {
 
   const totalValue = holdings.reduce((sum, h) => sum + h.value, 0);
 
-  let accumulatedAngle = 0;
-
   const segments = holdings.map((h, i) => {
     const percent = h.value / totalValue;
     const strokeDashoffset = circumference - (percent * circumference);
-    const rotationAngle = (accumulatedAngle * 360) / circumference;
-    accumulatedAngle += percent * circumference;
+    const prevValueSum = holdings.slice(0, i).reduce((sum, prev) => sum + prev.value, 0);
+    const prevPercentSum = prevValueSum / totalValue;
+    const rotationAngle = prevPercentSum * 360;
 
     return {
       ...h,

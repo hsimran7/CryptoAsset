@@ -3,12 +3,10 @@ import { useApp } from '../context/AppContext';
 import { 
   Bot, 
   Send, 
-  Sparkles, 
   Terminal, 
   HelpCircle,
   TrendingUp,
-  Activity,
-  Layers
+  Activity
 } from 'lucide-react';
 
 export default function AIAssistant() {

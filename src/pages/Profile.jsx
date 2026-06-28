@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
-  User, 
   Key, 
   ShieldCheck, 
   Fingerprint, 
-  Mail, 
   Plus, 
-  Check, 
   Eye, 
-  EyeOff,
-  Copy
+  EyeOff
 } from 'lucide-react';
 
 export default function Profile() {

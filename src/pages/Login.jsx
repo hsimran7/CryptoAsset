@@ -1,19 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Eye, LogIn, User, Lock, Sparkles, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { loginUser, resendVerificationEmail } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const errType = params.get('error');
+    if (errType === 'GoogleAuthFailed' || errType === 'OAuthFailed') {
+      return 'Google authentication failed. Please try again.';
+    } else if (errType === 'ServerError') {
+      return 'Internal server error. Please try again later.';
+    }
+    return '';
+  });
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState('');
-  
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const handleResendVerification = async () => {
     let email = username.trim();
@@ -35,15 +43,6 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const errType = params.get('error');
-    if (errType === 'GoogleAuthFailed' || errType === 'OAuthFailed') {
-      setError('Google authentication failed. Please try again.');
-    } else if (errType === 'ServerError') {
-      setError('Internal server error. Please try again later.');
-    }
-  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

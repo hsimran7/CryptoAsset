@@ -7,12 +7,7 @@ import {
   Bot, 
   TrendingUp, 
   ShieldCheck, 
-  Sparkles, 
-  ArrowUpRight, 
-  ArrowDownRight,
-  Layers,
-  Terminal,
-  Activity
+  Sparkles
 } from 'lucide-react';
 
 export default function LandingPage() {

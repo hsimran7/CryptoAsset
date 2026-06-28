@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
 import { 
   FileText, 
   Download, 
   Sparkles, 
   DollarSign, 
   Calculator, 
-  CheckCircle2, 
-  Clock, 
-  FileSpreadsheet
+  Clock
 } from 'lucide-react';
 
 const MOCK_REPORTS = [
@@ -18,7 +15,7 @@ const MOCK_REPORTS = [
 ];
 
 export default function Reports() {
-  const { coins } = useApp();
+
   const [reportsList, setReportsList] = useState(MOCK_REPORTS);
   const [generatingReportId, setGeneratingReportId] = useState(null);
 

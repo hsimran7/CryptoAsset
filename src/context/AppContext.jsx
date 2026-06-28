@@ -87,6 +87,14 @@ export const AppProvider = ({ children }) => {
   // Portfolio State
   const [portfolio, setPortfolio] = useState(INITIAL_PORTFOLIO);
 
+  // Calculate live portfolio balanceUSD dynamically
+  const liveHoldingsValue = portfolio.holdings.reduce((sum, holding) => {
+    const liveCoin = coins.find(c => c.symbol === holding.symbol);
+    const price = liveCoin ? liveCoin.price : 0;
+    return sum + holding.amount * price;
+  }, 0);
+  const portfolioBalanceUSD = parseFloat((portfolio.cashUSD + liveHoldingsValue).toFixed(2));
+
   // Price Alerts State
   const [alerts, setAlerts] = useState(INITIAL_ALERTS);
 
@@ -97,7 +105,7 @@ export const AppProvider = ({ children }) => {
   ]);
 
   // AI Assistant Chat History
-  const [chatMessages, setChatMessages] = useState([
+  const [chatMessages, setChatMessages] = useState(() => [
     { sender: 'ai', text: 'Hello! I am CryptoVision AI, your advanced market assistant. Ask me to analyze your portfolio risk, summarize the latest FET activity, or check which coins look bullish today!', timestamp: new Date(Date.now() - 3600000).toISOString() }
   ]);
   const [isTyping, setIsTyping] = useState(false);
@@ -161,22 +169,9 @@ export const AppProvider = ({ children }) => {
     }, 4000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alerts]);
 
-  // Monitor total portfolio value according to coin price changes
-  useEffect(() => {
-    let holdingsValue = 0;
-    portfolio.holdings.forEach(holding => {
-      const liveCoin = coins.find(c => c.symbol === holding.symbol);
-      const price = liveCoin ? liveCoin.price : 0;
-      holdingsValue += holding.amount * price;
-    });
-
-    setPortfolio(prev => ({
-      ...prev,
-      balanceUSD: parseFloat((prev.cashUSD + holdingsValue).toFixed(2))
-    }));
-  }, [coins]);
 
   // Auth Operations
   const loginUser = async (loginCredential, password) => {
@@ -463,7 +458,10 @@ export const AppProvider = ({ children }) => {
       authLoading,
       coins,
       watchlist,
-      portfolio,
+      portfolio: {
+        ...portfolio,
+        balanceUSD: portfolioBalanceUSD
+      },
       alerts,
       notifications,
       chatMessages,

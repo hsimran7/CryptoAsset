@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { 
@@ -12,7 +12,6 @@ import {
   FileText, 
   User, 
   ShieldAlert, 
-  Menu, 
   ChevronLeft, 
   ChevronRight,
   Eye

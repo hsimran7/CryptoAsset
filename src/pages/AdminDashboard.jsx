@@ -6,7 +6,6 @@ import {
   Database, 
   Activity, 
   Users, 
-  Server, 
   ToggleLeft, 
   ToggleRight,
   AlertTriangle,
