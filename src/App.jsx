@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
+import { usePriceStore } from './store/usePriceStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Layout Components
@@ -18,6 +19,7 @@ import Watchlist from './pages/Watchlist';
 import CoinDetails from './pages/CoinDetails';
 import AIAssistant from './pages/AIAssistant';
 import AIPortfolioAnalyzer from './pages/AIPortfolioAnalyzer';
+import CoinComparison from './pages/CoinComparison';
 import Alerts from './pages/Alerts';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
@@ -111,6 +113,14 @@ function LayoutWrapper({ children }) {
 }
 
 export default function App() {
+  const connectSocket = usePriceStore((state) => state.connectSocket);
+  const disconnectSocket = usePriceStore((state) => state.disconnectSocket);
+
+  useEffect(() => {
+    connectSocket();
+    return () => disconnectSocket();
+  }, [connectSocket, disconnectSocket]);
+
   return (
     <AppProvider>
       <Router>
@@ -134,6 +144,7 @@ export default function App() {
               <Route path="/coin/:id" element={<CoinDetails />} />
               <Route path="/ai-assistant" element={<AIAssistant />} />
               <Route path="/ai-analyzer" element={<AIPortfolioAnalyzer />} />
+              <Route path="/compare" element={<CoinComparison />} />
               <Route path="/alerts" element={<Alerts />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/profile" element={<Profile />} />

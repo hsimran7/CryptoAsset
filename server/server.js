@@ -24,6 +24,10 @@ import assetPortfolioRoutes from './routes/assetPortfolioRoutes.js';
 import assetWatchlistRoutes from './routes/assetWatchlistRoutes.js';
 import alertsRoutes from './routes/alertsRoutes.js';
 import coinRoutes from './routes/coinRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
+import newsRoutes from './routes/newsRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import { initSocket, closeSocket } from './utils/socketService.js';
 
 // Connect to MongoDB
 connectDB();
@@ -69,6 +73,10 @@ app.use('/api/v1/portfolio-assets', assetPortfolioRoutes);
 app.use('/api/watchlist', assetWatchlistRoutes);
 app.use('/api/v1/watchlist-items', assetWatchlistRoutes);
 app.use('/api/v1/alerts', alertsRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/v1/ai', aiRoutes);
+app.use('/api/news', newsRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Base route fallback
 app.get('/', (req, res) => {
@@ -90,6 +98,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`[Server] CryptoVision AI Backend running in ${process.env.NODE_ENV || 'production'} mode on port ${PORT}`);
 });
+initSocket(server);
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
@@ -103,6 +112,7 @@ const shutdownGracefully = (signal) => {
   console.log(`\n[Server] Received ${signal}. Starting graceful shutdown...`);
   server.close(async () => {
     console.log('[Server] HTTP server closed.');
+    closeSocket();
     try {
       await mongoose.connection.close();
       console.log('[Database] MongoDB connection closed.');

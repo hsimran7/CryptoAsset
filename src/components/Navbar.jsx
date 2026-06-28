@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { usePriceStore } from '../store/usePriceStore';
 import { 
   Bell, 
   Search, 
@@ -16,6 +17,7 @@ import {
 
 export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
   const { user, coins, notifications, logoutUser, markNotificationAsRead, clearNotifications } = useApp();
+  const livePrices = usePriceStore((state) => state.prices);
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
@@ -120,7 +122,13 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
       {/* Ticking Ticker tape slider (Mid portion) */}
       <div className="hidden lg:flex items-center gap-6 overflow-hidden mx-6 flex-1 max-w-lg select-none text-[11px]">
         {coins.slice(0, 3).map((coin) => {
-          const isUp = coin.change24h >= 0;
+          const liveData = livePrices[coin.id] || { price: coin.price, change24h: coin.change24h, status: 'same' };
+          const isUp = liveData.change24h >= 0;
+          
+          let flashClass = '';
+          if (liveData.status === 'up') flashClass = 'price-flash-up';
+          else if (liveData.status === 'down') flashClass = 'price-flash-down';
+
           return (
             <Link 
               key={coin.id} 
@@ -128,10 +136,12 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
               className="flex items-center gap-2 hover:bg-white/5 py-1 px-2.5 rounded transition-all whitespace-nowrap"
             >
               <span className="font-bold text-slate-300">{coin.symbol}</span>
-              <span className="text-white font-mono font-semibold">${coin.price.toLocaleString()}</span>
+              <span className={`text-white font-mono font-semibold transition-all ${flashClass}`}>
+                ${liveData.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </span>
               <span className={`flex items-center font-bold ${isUp ? 'text-emerald-500' : 'text-rose-500'}`}>
                 {isUp ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}
-                {isUp ? '+' : ''}{coin.change24h}%
+                {isUp ? '+' : ''}{liveData.change24h.toFixed(2)}%
               </span>
             </Link>
           );

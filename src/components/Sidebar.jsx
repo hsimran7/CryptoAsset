@@ -14,7 +14,8 @@ import {
   ShieldAlert, 
   ChevronLeft, 
   ChevronRight,
-  Eye
+  Eye,
+  GitCompare
 } from 'lucide-react';
 
 export default function Sidebar({ collapsed, setCollapsed }) {
@@ -29,8 +30,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     { name: 'Portfolio', path: '/portfolio', icon: Briefcase },
     { name: 'Watchlist', path: '/watchlist', icon: Star },
     { name: 'AI Assistant', path: '/ai-assistant', icon: Bot, highlight: true },
-    { name: 'AI Analyzer', path: '/ai-analyzer', icon: Sliders },
-    { name: 'Alerts', path: '/alerts', icon: Bell, badge: activeAlertsCount > 0 ? activeAlertsCount : null },
+    { name: 'AI Analyzer',  path: '/ai-analyzer',  icon: Sliders },
+    { name: 'Compare Coins',path: '/compare',       icon: GitCompare },
+    { name: 'Alerts',       path: '/alerts',        icon: Bell, badge: activeAlertsCount > 0 ? activeAlertsCount : null },
     { name: 'Reports', path: '/reports', icon: FileText },
     { name: 'Profile', path: '/profile', icon: User },
   ];

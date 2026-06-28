@@ -151,3 +151,37 @@
 .btn-premium-dark {
   @apply bg-dark-700 hover:bg-dark-600 text-slate-200 font-medium px-4 py-2 rounded-lg transition-all duration-200 border border-dark-600 active:scale-[0.98] hover:border-slate-500/30;
 }
+
+/* Price Movements Flash Animations */
+@keyframes flash-green {
+  0% {
+    background-color: rgba(16, 185, 129, 0.25);
+    color: #10b981;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    background-color: rgba(244, 63, 94, 0.25);
+    color: #f43f5e;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.price-flash-up {
+  animation: flash-green 0.8s ease-out;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.price-flash-down {
+  animation: flash-red 0.8s ease-out;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+

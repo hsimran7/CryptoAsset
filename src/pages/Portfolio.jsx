@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { apiRequest } from '../utils/api';
+import { usePriceStore } from '../store/usePriceStore';
 import {
   PieChart,
   Pie,
@@ -61,7 +62,7 @@ const CustomBarTooltip = ({ active, payload }) => {
 export default function Portfolio() {
   const { coins } = useApp();
   const [assets, setAssets] = useState([]);
-  const [summary, setSummary] = useState({ totalInvested: 0, currentValue: 0, totalProfitValue: 0, totalRoi: 0 });
+
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -97,7 +98,6 @@ export default function Portfolio() {
       const res = await apiRequest('/portfolio-assets');
       if (res.success && res.data) {
         setAssets(res.data.assets || []);
-        setSummary(res.data.summary || { totalInvested: 0, currentValue: 0, totalProfitValue: 0, totalRoi: 0 });
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to load portfolio assets.');
@@ -220,20 +220,48 @@ export default function Portfolio() {
     }
   };
 
+  const livePrices = usePriceStore((state) => state.prices);
+
+  // Re-calculate assets with live prices from Zustand store
+  const liveAssets = assets.map(asset => {
+    const liveData = livePrices[asset.coinId];
+    const currentPrice = liveData?.price || asset.currentPrice || asset.buyPrice;
+    const totalInvested = parseFloat((asset.quantity * asset.buyPrice).toFixed(2));
+    const currentValue = parseFloat((asset.quantity * currentPrice).toFixed(2));
+    const profitValue = parseFloat((currentValue - totalInvested).toFixed(2));
+    const roi = totalInvested === 0 ? 0 : parseFloat(((profitValue / totalInvested) * 100).toFixed(2));
+
+    return {
+      ...asset,
+      currentPrice,
+      totalInvested,
+      currentValue,
+      profitValue,
+      roi,
+      status: liveData?.status || 'same'
+    };
+  });
+
+  // Calculate live portfolio summary metrics
+  const liveTotalInvested = parseFloat(liveAssets.reduce((sum, a) => sum + a.totalInvested, 0).toFixed(2));
+  const liveCurrentValue = parseFloat(liveAssets.reduce((sum, a) => sum + a.currentValue, 0).toFixed(2));
+  const liveTotalProfitValue = parseFloat((liveCurrentValue - liveTotalInvested).toFixed(2));
+  const liveTotalRoi = liveTotalInvested === 0 ? 0 : parseFloat(((liveTotalProfitValue / liveTotalInvested) * 100).toFixed(2));
+
   // Setup Pie Chart Data
-  const pieData = assets.map(a => ({
+  const pieData = liveAssets.map(a => ({
     name: a.symbol,
     value: a.currentValue
   })).sort((a, b) => b.value - a.value);
 
   // Setup Bar Chart Data
-  const barData = assets.map(a => ({
+  const barData = liveAssets.map(a => ({
     name: a.symbol,
     'Invested (USD)': a.totalInvested,
     'Current Value (USD)': a.currentValue
   }));
 
-  const isProfit = summary.totalProfitValue >= 0;
+  const isProfit = liveTotalProfitValue >= 0;
 
   return (
     <div className="space-y-6 text-left relative">
@@ -281,14 +309,14 @@ export default function Portfolio() {
             {/* Net Value */}
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Net Portfolio Value</span>
-              <h2 className="text-2xl font-extrabold text-white font-mono mt-1.5">${summary.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+              <h2 className="text-2xl font-extrabold text-white font-mono mt-1.5">${liveCurrentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               <span className="text-[10px] text-slate-400 mt-1 block">Live assets valuation</span>
             </div>
 
             {/* Total Invested */}
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total Invested Cost</span>
-              <h2 className="text-2xl font-extrabold text-white font-mono mt-1.5">${summary.totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+              <h2 className="text-2xl font-extrabold text-white font-mono mt-1.5">${liveTotalInvested.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               <span className="text-[10px] text-slate-400 mt-1 block">Cumulative purchase basis</span>
             </div>
 
@@ -296,7 +324,7 @@ export default function Portfolio() {
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total Profit / Loss</span>
               <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {isProfit ? '+' : ''}${summary.totalProfitValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                {isProfit ? '+' : ''}${liveTotalProfitValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </h2>
               <span className={`text-[10px] font-bold flex items-center gap-1 mt-1 ${isProfit ? 'text-emerald-500' : 'text-rose-500'}`}>
                 {isProfit ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
@@ -308,7 +336,7 @@ export default function Portfolio() {
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">ROI Percentage</span>
               <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {isProfit ? '+' : ''}{summary.totalRoi.toFixed(2)}%
+                {isProfit ? '+' : ''}{liveTotalRoi.toFixed(2)}%
               </h2>
               <span className="text-[10px] text-slate-400 mt-1 block">Return on Investment</span>
             </div>
@@ -390,15 +418,16 @@ export default function Portfolio() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {assets.length === 0 ? (
+                  {liveAssets.length === 0 ? (
                     <tr>
                       <td colSpan="9" className="py-12 text-center text-slate-500 font-sans">
                         Your custom portfolio ledger is empty. Click 'Add Asset Entry' above to document custom purchases.
                       </td>
                     </tr>
                   ) : (
-                    assets.map((a) => {
+                    liveAssets.map((a) => {
                       const isProfitVal = a.profitValue >= 0;
+                      const flashClass = a.status === 'up' ? 'price-flash-up' : a.status === 'down' ? 'price-flash-down' : '';
                       return (
                         <tr key={a._id} className="hover:bg-white/[0.01]">
                           <td className="py-3.5 font-sans">
@@ -414,9 +443,17 @@ export default function Portfolio() {
                           </td>
                           <td className="py-3.5 text-right font-bold text-slate-200">{a.quantity.toLocaleString(undefined, { maximumFractionDigits: 5 })}</td>
                           <td className="py-3.5 text-right text-slate-400">${a.buyPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                          <td className="py-3.5 text-right text-slate-200">${a.currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                          <td className="py-3.5 text-right text-slate-200">
+                            <span className={`font-mono transition-all ${flashClass}`}>
+                              ${a.currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </span>
+                          </td>
                           <td className="py-3.5 text-right text-slate-400">${a.totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                          <td className="py-3.5 text-right font-bold text-slate-100">${a.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                          <td className="py-3.5 text-right font-bold text-slate-100">
+                            <span className={`font-mono transition-all ${flashClass}`}>
+                              ${a.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </span>
+                          </td>
                           <td className={`py-3.5 text-right font-bold ${isProfitVal ? 'text-emerald-500' : 'text-rose-500'}`}>
                             <div>{isProfitVal ? '+' : ''}${a.profitValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                             <div className="text-[10px]">{isProfitVal ? '+' : ''}{a.roi.toFixed(2)}%</div>

@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { usePriceStore } from '../store/usePriceStore';
+import { apiRequest } from '../utils/api';
 import { AreaChart } from '../components/Charts';
+import DailySummaryWidget from '../components/DailySummaryWidget';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -27,17 +30,56 @@ const MOCK_GROWTH_DATA = [
 export default function Dashboard() {
   const { coins, portfolio, alerts, notifications } = useApp();
   const [chartInterval, setChartInterval] = useState('7D');
+  const livePrices = usePriceStore((state) => state.prices);
+  const [assets, setAssets] = useState([]);
+
+  useEffect(() => {
+    const loadAssets = async () => {
+      try {
+        const res = await apiRequest('/portfolio-assets');
+        if (res.success && res.data) {
+          setAssets(res.data.assets || []);
+        }
+      } catch (err) {
+        console.error('Error loading dashboard assets:', err);
+      }
+    };
+    const handle = setTimeout(() => {
+      loadAssets();
+    }, 0);
+    return () => clearTimeout(handle);
+  }, []);
 
   // Compute stats dynamically
   const activeAlerts = alerts.filter(a => a.isActive).length;
   const recentAiSignals = notifications.filter(n => n.type === 'ai').length;
 
-  // Sorting gainers and losers from ticking coins array
-  const sortedCoins = [...coins].sort((a, b) => b.change24h - a.change24h);
+  // Compute live portfolio balance based on custom assets ledger
+  const liveHoldingsValue = assets.reduce((sum, asset) => {
+    const livePrice = livePrices[asset.coinId]?.price || asset.buyPrice;
+    return sum + (asset.quantity * livePrice);
+  }, 0);
+
+  const liveNetWorth = portfolio.cashUSD + liveHoldingsValue;
+
+  const totalCostBasis = assets.reduce((sum, asset) => sum + (asset.quantity * asset.buyPrice), 0);
+  const livePnL = liveHoldingsValue - totalCostBasis;
+  const livePnLPct = totalCostBasis === 0 ? 0 : (livePnL / totalCostBasis) * 100;
+
+  // Sorting gainers and losers dynamically from ticking live prices
+  const liveCoins = coins.map(c => {
+    const liveData = livePrices[c.id];
+    return {
+      ...c,
+      price: liveData?.price || c.price,
+      change24h: liveData?.change24h || c.change24h,
+      status: liveData?.status || 'same'
+    };
+  });
+
+  const sortedCoins = [...liveCoins].sort((a, b) => b.change24h - a.change24h);
   const topGainers = sortedCoins.slice(0, 3);
   const topLosers = [...sortedCoins].reverse().slice(0, 3);
-
-
   return (
     <div className="space-y-6 text-left">
       {/* 1. WELCOME BANNER HEADER */}
@@ -61,9 +103,10 @@ export default function Dashboard() {
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between relative overflow-hidden">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Net Portfolio Value</span>
-            <h3 className="text-xl font-bold text-white font-mono">${portfolio.balanceUSD.toLocaleString()}</h3>
-            <span className="text-[10px] text-emerald-400 font-bold flex items-center">
-              <TrendingUp className="w-3.5 h-3.5 mr-0.5" /> +2.91% (24h)
+            <h3 className="text-xl font-bold text-white font-mono">${liveNetWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+            <span className={`text-[10px] font-bold flex items-center ${livePnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {livePnL >= 0 ? <TrendingUp className="w-3.5 h-3.5 mr-0.5" /> : <TrendingDown className="w-3.5 h-3.5 mr-0.5" />}
+              <span>{livePnL >= 0 ? '+' : ''}{livePnLPct.toFixed(2)}% (ROI)</span>
             </span>
           </div>
           <div className="w-10 h-10 rounded-lg bg-indigo-600/10 text-indigo-400 border border-indigo-500/10 flex items-center justify-center">
@@ -75,7 +118,7 @@ export default function Dashboard() {
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Available Balance</span>
-            <h3 className="text-xl font-bold text-white font-mono">${portfolio.cashUSD.toLocaleString()}</h3>
+            <h3 className="text-xl font-bold text-white font-mono">${portfolio.cashUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
             <span className="text-[10px] text-slate-400 font-medium">USD Cash reserves</span>
           </div>
           <div className="w-10 h-10 rounded-lg bg-emerald-600/10 text-emerald-400 border border-emerald-500/10 flex items-center justify-center">
@@ -185,24 +228,29 @@ export default function Dashboard() {
             <TrendingUp className="w-4 h-4" /> Top 3 Gainers
           </h3>
           <div className="space-y-2.5">
-            {topGainers.map((coin) => (
-              <Link 
-                key={coin.id} 
-                to={`/coin/${coin.id}`} 
-                className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="font-bold text-white text-xs">{coin.symbol}</span>
-                  <span className="text-slate-400 text-[10px]">{coin.name}</span>
-                </div>
-                <div className="flex items-center gap-3 text-right">
-                  <span className="font-semibold text-slate-200 text-xs font-mono">${coin.price.toLocaleString()}</span>
-                  <span className="text-[10px] font-bold text-emerald-400 flex items-center">
-                    <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> +{coin.change24h}%
-                  </span>
-                </div>
-              </Link>
-            ))}
+            {topGainers.map((coin) => {
+              const flashClass = coin.status === 'up' ? 'price-flash-up' : coin.status === 'down' ? 'price-flash-down' : '';
+              return (
+                <Link 
+                  key={coin.id} 
+                  to={`/coin/${coin.id}`} 
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-white text-xs">{coin.symbol}</span>
+                    <span className="text-slate-400 text-[10px]">{coin.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-right">
+                    <span className={`font-semibold text-slate-200 text-xs font-mono transition-all ${flashClass}`}>
+                      ${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-400 flex items-center">
+                      <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> +{coin.change24h.toFixed(2)}%
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -212,48 +260,34 @@ export default function Dashboard() {
             <TrendingDown className="w-4 h-4" /> Top 3 Losers
           </h3>
           <div className="space-y-2.5">
-            {topLosers.map((coin) => (
-              <Link 
-                key={coin.id} 
-                to={`/coin/${coin.id}`} 
-                className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="font-bold text-white text-xs">{coin.symbol}</span>
-                  <span className="text-slate-400 text-[10px]">{coin.name}</span>
-                </div>
-                <div className="flex items-center gap-3 text-right">
-                  <span className="font-semibold text-slate-200 text-xs font-mono">${coin.price.toLocaleString()}</span>
-                  <span className="text-[10px] font-bold text-rose-400 flex items-center">
-                    <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" /> {coin.change24h}%
-                  </span>
-                </div>
-              </Link>
-            ))}
+            {topLosers.map((coin) => {
+              const flashClass = coin.status === 'up' ? 'price-flash-up' : coin.status === 'down' ? 'price-flash-down' : '';
+              return (
+                <Link 
+                  key={coin.id} 
+                  to={`/coin/${coin.id}`} 
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-white text-xs">{coin.symbol}</span>
+                    <span className="text-slate-400 text-[10px]">{coin.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-right">
+                    <span className={`font-semibold text-slate-200 text-xs font-mono transition-all ${flashClass}`}>
+                      ${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                    <span className="text-[10px] font-bold text-rose-400 flex items-center">
+                      <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" /> {coin.change24h.toFixed(2)}%
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        {/* SIMULATED MACRO NEWS / SENTIMENT BAR */}
-        <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex flex-col justify-between space-y-3.5">
-          <h3 className="font-bold text-xs text-slate-400 uppercase tracking-wider">
-            Macro Sentiment Gauge
-          </h3>
-          
-          <div className="bg-dark-900 border border-white/5 p-3 rounded-lg space-y-2.5">
-            <div className="flex items-center justify-between text-[10px]">
-              <span className="text-slate-400 font-semibold">Fear &amp; Greed Index:</span>
-              <span className="font-bold text-emerald-400 uppercase tracking-wider">Greed (74/100)</span>
-            </div>
-            {/* Custom progress slider */}
-            <div className="w-full h-1.5 bg-dark-700 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full" style={{ width: '74%' }} />
-            </div>
-          </div>
-
-          <div className="text-[10px] text-slate-500 leading-normal flex-1">
-            <span className="font-bold text-slate-300">Bloomberg macro alert:</span> Fed holds interest rates steady as global liquid capital increases. Asset classes remain highly correlated.
-          </div>
-        </div>
+        {/* AI DAILY SUMMARY WIDGET — replaces static sentiment card */}
+        <DailySummaryWidget />
       </div>
     </div>
   );
