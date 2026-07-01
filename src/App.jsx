@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
+import React, { useState, useEffect, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { AppProvider, useApp } from './context/AppContext';
 import { usePriceStore } from './store/usePriceStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -8,35 +8,87 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 
-// Pages
-import LandingPage from './pages/LandingPage';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Market from './pages/Market';
-import Portfolio from './pages/Portfolio';
-import Watchlist from './pages/Watchlist';
-import CoinDetails from './pages/CoinDetails';
-import AIAssistant from './pages/AIAssistant';
-import AIPortfolioAnalyzer from './pages/AIPortfolioAnalyzer';
-import CoinComparison from './pages/CoinComparison';
-import Alerts from './pages/Alerts';
-import Reports from './pages/Reports';
-import Profile from './pages/Profile';
-import AdminDashboard from './pages/AdminDashboard';
+// Pages (Lazy Loaded)
+const LandingPage = React.lazy(() => import('./pages/LandingPage'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Register = React.lazy(() => import('./pages/Register'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const Market = React.lazy(() => import('./pages/Market'));
+const Portfolio = React.lazy(() => import('./pages/Portfolio'));
+const Watchlist = React.lazy(() => import('./pages/Watchlist'));
+const CoinDetails = React.lazy(() => import('./pages/CoinDetails'));
+const AIAssistant = React.lazy(() => import('./pages/AIAssistant'));
+const AIPortfolioAnalyzer = React.lazy(() => import('./pages/AIPortfolioAnalyzer'));
+const CoinComparison = React.lazy(() => import('./pages/CoinComparison'));
+const Alerts = React.lazy(() => import('./pages/Alerts'));
+const Reports = React.lazy(() => import('./pages/Reports'));
+const Profile = React.lazy(() => import('./pages/Profile'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 
 // Auth & Route Protection
 import { ProtectedRoute, AdminRoute } from './components/AuthRoutes';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import VerifyEmail from './pages/VerifyEmail';
-import OAuthSuccess from './pages/OAuthSuccess';
+const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
+const VerifyEmail = React.lazy(() => import('./pages/VerifyEmail'));
+const OAuthSuccess = React.lazy(() => import('./pages/OAuthSuccess'));
+import ToastContainer from './components/ToastContainer';
+import CommandPalette from './components/CommandPalette';
 
 // Custom Route Wrapper for layout alignment
 function LayoutWrapper({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toggleTheme, toggleMode, addToast } = useApp();
+
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 1. Command Palette: Ctrl+K or Cmd+K
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(prev => !prev);
+      }
+      
+      // 2. Toggle Theme: Ctrl+L or Cmd+L
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        toggleTheme();
+      }
+
+      // 3. Toggle Mode: Ctrl+B or Cmd+B
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleMode();
+      }
+
+      // 4. Navigate Dashboard: Ctrl+D
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd' && !e.shiftKey) {
+        e.preventDefault();
+        navigate('/dashboard');
+        addToast('Navigated to Dashboard', 'info');
+      }
+
+      // 5. Navigate Market: Ctrl+M
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        navigate('/market');
+        addToast('Navigated to Market Feed', 'info');
+      }
+
+      // 6. Navigate Portfolio: Ctrl+P
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        navigate('/portfolio');
+        addToast('Navigated to Portfolio Ledger', 'info');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate, toggleTheme, toggleMode, addToast]);
 
   // Route exceptions: Authentication routes do not display standard dashboard chrome
   const isAuthRoute =
@@ -48,11 +100,13 @@ function LayoutWrapper({ children }) {
     location.pathname.startsWith('/reset-password/') ||
     location.pathname.startsWith('/oauth-success');
 
-  if (isAuthRoute) {
-    return <div className="w-full min-h-screen">{children}</div>;
-  }
-
-  return (
+  const mainContent = isAuthRoute ? (
+    <div className="w-full min-h-screen">
+      <Suspense fallback={<RouteLoadingSpinner />}>
+        {children}
+      </Suspense>
+    </div>
+  ) : (
     <div className="flex min-h-screen bg-dark-950 text-slate-100 overflow-x-hidden font-sans">
       {/* 1. SIDEBAR NAVIGATION */}
       {/* Desktop Sidebar */}
@@ -103,12 +157,22 @@ function LayoutWrapper({ children }) {
               transition={{ duration: 0.22, ease: 'easeInOut' }}
               className="w-full h-full"
             >
-              {children}
+              <Suspense fallback={<RouteLoadingSpinner />}>
+                {children}
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {mainContent}
+      <ToastContainer />
+      <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+    </>
   );
 }
 
@@ -163,3 +227,10 @@ export default function App() {
     </AppProvider>
   );
 }
+
+const RouteLoadingSpinner = () => (
+  <div className="w-full min-h-[40vh] flex flex-col items-center justify-center gap-3">
+    <div className="w-10 h-10 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin" />
+    <span className="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider animate-pulse">Loading Terminal Module...</span>
+  </div>
+);

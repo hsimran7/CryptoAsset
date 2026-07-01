@@ -46,6 +46,139 @@ const INITIAL_ALERTS = [
   { id: 'a3', symbol: 'SOL', type: 'ABOVE', value: 160, isActive: false, createdAt: '2026-06-08T09:00:00Z' }
 ];
 
+const TRANSLATIONS = {
+  en: {
+    dashboard: 'Dashboard',
+    market: 'Market',
+    portfolio: 'Portfolio',
+    watchlist: 'Watchlist',
+    aiAssistant: 'AI Assistant',
+    aiAnalyzer: 'AI Analyzer',
+    compareCoins: 'Compare Coins',
+    alerts: 'Alerts',
+    reports: 'Reports',
+    profile: 'Profile',
+    adminPanel: 'Admin Panel',
+    logout: 'Logout',
+    login: 'Login',
+    signUp: 'Sign Up',
+    netPortfolioValue: 'Net Portfolio Value',
+    totalInvested: 'Total Invested Cost',
+    totalProfitLoss: 'Total Profit / Loss',
+    roiPercentage: 'ROI Percentage',
+    assetAllocation: 'Asset Allocation',
+    investedVsCurrent: 'Invested Capital vs Current Valuation',
+    activeHoldings: 'Active Holdings Ledger',
+    addAssetEntry: 'Add Asset Entry',
+    beginnerMode: 'Beginner Mode',
+    proMode: 'Pro Mode',
+    beginnerDesc: 'Showing simple summaries and definitions.',
+    proDesc: 'Showing complex charts and financial indicators.',
+    voiceSearchActive: 'Listening for voice command...',
+    voiceSearchTip: 'Try saying: "go to market" or "toggle theme"',
+    voiceNotSupported: 'Speech recognition is not supported in this browser.',
+    shortcutTip: 'Press ⌘K or Ctrl+K to open command palette'
+  },
+  es: {
+    dashboard: 'Tablero',
+    market: 'Mercado',
+    portfolio: 'Portafolio',
+    watchlist: 'Lista de seguimiento',
+    aiAssistant: 'Asistente de IA',
+    aiAnalyzer: 'Analizador de IA',
+    compareCoins: 'Comparar monedas',
+    alerts: 'Alertas',
+    reports: 'Informes',
+    profile: 'Perfil',
+    adminPanel: 'Panel de administración',
+    logout: 'Cerrar sesión',
+    login: 'Iniciar sesión',
+    signUp: 'Registrarse',
+    netPortfolioValue: 'Valor neto de la cartera',
+    totalInvested: 'Costo total invertido',
+    totalProfitLoss: 'Ganancia / Pérdida total',
+    roiPercentage: 'Porcentaje de ROI',
+    assetAllocation: 'Asignación de activos',
+    investedVsCurrent: 'Capital invertido vs Valoración actual',
+    activeHoldings: 'Libro de cartera activo',
+    addAssetEntry: 'Agregar activo',
+    beginnerMode: 'Modo principiante',
+    proMode: 'Modo profesional',
+    beginnerDesc: 'Mostrando resúmenes y definiciones simples.',
+    proDesc: 'Mostrando gráficos complejos e indicadores financieros.',
+    voiceSearchActive: 'Escuchando comando de voz...',
+    voiceSearchTip: 'Prueba a decir: "ir al mercado" o "cambiar tema"',
+    voiceNotSupported: 'El reconocimiento de voz no es compatible con este navegador.',
+    shortcutTip: 'Presiona ⌘K o Ctrl+K para abrir la paleta de comandos'
+  },
+  fr: {
+    dashboard: 'Tableau de bord',
+    market: 'Marché',
+    portfolio: 'Portefeuille',
+    watchlist: 'Liste de surveillance',
+    aiAssistant: 'Assistant IA',
+    aiAnalyzer: 'Analyseur IA',
+    compareCoins: 'Comparer les pièces',
+    alerts: 'Alertes',
+    reports: 'Rapports',
+    profile: 'Profil',
+    adminPanel: 'Panneau d\'administration',
+    logout: 'Déconnexion',
+    login: 'Connexion',
+    signUp: 'S\'inscrire',
+    netPortfolioValue: 'Valeur nette du portefeuille',
+    totalInvested: 'Coût total investi',
+    totalProfitLoss: 'Bénéfice / perte total',
+    roiPercentage: 'Pourcentage de ROI',
+    assetAllocation: 'Allocation d\'actifs',
+    investedVsCurrent: 'Capital investi vs Valorisation actuelle',
+    activeHoldings: 'Registre des avoirs actifs',
+    addAssetEntry: 'Ajouter une entrée',
+    beginnerMode: 'Mode débutant',
+    proMode: 'Mode pro',
+    beginnerDesc: 'Affichage de résumés simples et de définitions.',
+    proDesc: 'Affichage de graphiques complexes et d\'indicateurs financiers.',
+    voiceSearchActive: 'Écoute de la commande vocale...',
+    voiceSearchTip: 'Dites par exemple : "aller au marché" ou "changer de thème"',
+    voiceNotSupported: 'La reconnaissance vocale n\'est pas prise en charge par ce navigateur.',
+    shortcutTip: 'Appuyez sur ⌘K ou Ctrl+K pour ouvrir la palette de commandes'
+  },
+  de: {
+    dashboard: 'Dashboard',
+    market: 'Markt',
+    portfolio: 'Portfolio',
+    watchlist: 'Beobachtungsliste',
+    aiAssistant: 'KI-Assistent',
+    aiAnalyzer: 'KI-Analysator',
+    compareCoins: 'Münzen vergleichen',
+    alerts: 'Benachrichtigungen',
+    reports: 'Berichte',
+    profile: 'Profil',
+    adminPanel: 'Admin-Bereich',
+    logout: 'Abmelden',
+    login: 'Anmelden',
+    signUp: 'Registrieren',
+    netPortfolioValue: 'Netto-Portfoliowert',
+    totalInvested: 'Investierte Gesamtkosten',
+    totalProfitLoss: 'Gesamtgewinn / -verlust',
+    roiPercentage: 'ROI-Prozentsatz',
+    assetAllocation: 'Anlagenaufteilung',
+    investedVsCurrent: 'Investiertes Kapital vs. Aktuelle Bewertung',
+    activeHoldings: 'Aktives Bestandsbuch',
+    addAssetEntry: 'Anlage hinzufügen',
+    beginnerMode: 'Einsteiger-Modus',
+    proMode: 'Profi-Modus',
+    beginnerDesc: 'Zeigt einfache Zusammenfassungen und Definitionen.',
+    proDesc: 'Zeigt komplexe Charts und Finanzindikatoren.',
+    voiceSearchActive: 'Warte auf Sprachbefehl...',
+    voiceSearchTip: 'Sagen Sie z. B.: "gehe zum Markt" oder "Farbschema ändern"',
+    voiceNotSupported: 'Spracherkennung wird in diesem Browser nicht unterstützt.',
+    shortcutTip: 'Drücken Sie ⌘K oder Ctrl+K, um die Befehlspalette zu öffnen'
+  }
+};
+
+let toastCounter = 0;
+
 export const AppProvider = ({ children }) => {
   // Authentication State
   const [user, setUser] = useState(() => {
@@ -53,6 +186,97 @@ export const AppProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
   const [authLoading, setAuthLoading] = useState(true);
+
+  // PWA Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const installApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`[PWA] Install choice outcome: ${outcome}`);
+    setDeferredPrompt(null);
+    setIsInstallable(false);
+  };
+
+  // Global Toasts State
+  const [toasts, setToasts] = useState([]);
+
+  const addToast = (message, type = 'info') => {
+    toastCounter++;
+    const id = `toast-${toastCounter}`;
+    setToasts(prev => [...prev, { id, message, type }]);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+      removeToast(id);
+    }, 4000);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Language Support
+  const [language, setLanguage] = useState(() => localStorage.getItem('cv_lang') || 'en');
+  
+  const changeLanguage = (lang) => {
+    if (TRANSLATIONS[lang]) {
+      setLanguage(lang);
+      localStorage.setItem('cv_lang', lang);
+      addToast(`Language changed to ${lang.toUpperCase()}`, 'info');
+    }
+  };
+
+  const t = (key) => {
+    return TRANSLATIONS[language]?.[key] || TRANSLATIONS['en']?.[key] || key;
+  };
+
+  // Theme Support
+  const [theme, setTheme] = useState(() => localStorage.getItem('cv_theme') || 'dark');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+    localStorage.setItem('cv_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    addToast(`Theme switched to ${nextTheme} mode`, 'info');
+  };
+
+  // Beginner / Pro Mode Support
+  const [mode, setMode] = useState(() => localStorage.getItem('cv_mode') || 'pro');
+
+  const toggleMode = () => {
+    const nextMode = mode === 'beginner' ? 'pro' : 'beginner';
+    setMode(nextMode);
+    localStorage.setItem('cv_mode', nextMode);
+    addToast(`Switched to ${nextMode === 'beginner' ? 'Beginner' : 'Pro'} mode`, 'info');
+  };
 
   // Restore authenticated session on startup
   useEffect(() => {
@@ -186,9 +410,11 @@ export const AppProvider = ({ children }) => {
       setUser(userData);
       localStorage.setItem('cv_user', JSON.stringify(userData));
       localStorage.setItem('cv_token', userData.token);
+      addToast('Logged in successfully!', 'success');
       return userData;
     } catch (error) {
       console.error('[Login Error]', error.message);
+      addToast(error.message || 'Login failed', 'error');
       throw error;
     }
   };
@@ -199,9 +425,11 @@ export const AppProvider = ({ children }) => {
         method: 'POST',
         body: { username, email, password }
       });
+      addToast('Registration successful! Check your email to verify.', 'success');
       return response;
     } catch (error) {
       console.error('[Registration Error]', error.message);
+      addToast(error.message || 'Registration failed', 'error');
       throw error;
     }
   };
@@ -212,9 +440,11 @@ export const AppProvider = ({ children }) => {
         method: 'POST',
         body: { email }
       });
+      addToast('Verification email resent.', 'success');
       return response;
     } catch (error) {
       console.error('[Resend Verification Error]', error.message);
+      addToast(error.message || 'Resend failed', 'error');
       throw error;
     }
   };
@@ -223,20 +453,26 @@ export const AppProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('cv_user');
     localStorage.removeItem('cv_token');
+    addToast('Logged out successfully.', 'info');
   };
 
   // Watchlist Actions
   const toggleWatchlist = (symbol) => {
     if (watchlist.includes(symbol)) {
       setWatchlist(watchlist.filter(s => s !== symbol));
+      addToast(`Removed ${symbol} from watchlist.`, 'info');
     } else {
       setWatchlist([...watchlist, symbol]);
+      addToast(`Added ${symbol} to watchlist.`, 'success');
     }
   };
 
   // Portfolio Actions
   const handleBuy = (symbol, amount, usdValue) => {
-    if (portfolio.cashUSD < usdValue) return false;
+    if (portfolio.cashUSD < usdValue) {
+      addToast('Insufficient USD cash balance!', 'error');
+      return false;
+    }
     
     setPortfolio(prev => {
       const holdingsCopy = [...prev.holdings];
@@ -278,12 +514,16 @@ export const AppProvider = ({ children }) => {
         transactions: [newTx, ...prev.transactions]
       };
     });
+    addToast(`Successfully purchased ${amount} ${symbol}!`, 'success');
     return true;
   };
 
   const handleSell = (symbol, amount, usdValue) => {
     const currentHolding = portfolio.holdings.find(h => h.symbol === symbol);
-    if (!currentHolding || currentHolding.amount < amount) return false;
+    if (!currentHolding || currentHolding.amount < amount) {
+      addToast('Insufficient asset balance!', 'error');
+      return false;
+    }
 
     setPortfolio(prev => {
       let holdingsCopy = [...prev.holdings];
@@ -316,6 +556,7 @@ export const AppProvider = ({ children }) => {
         transactions: [newTx, ...prev.transactions]
       };
     });
+    addToast(`Successfully sold ${amount} ${symbol}!`, 'success');
     return true;
   };
 
@@ -337,10 +578,14 @@ export const AppProvider = ({ children }) => {
         transactions: [newTx, ...prev.transactions]
       };
     });
+    addToast(`Deposited $${parseFloat(amount).toLocaleString()} successfully!`, 'success');
   };
 
   const withdrawCash = (amount) => {
-    if (portfolio.cashUSD < amount) return false;
+    if (portfolio.cashUSD < amount) {
+      addToast('Insufficient cash balance to withdraw!', 'error');
+      return false;
+    }
     setPortfolio(prev => {
       const nextCash = prev.cashUSD - parseFloat(amount);
       const newTx = {
@@ -358,6 +603,7 @@ export const AppProvider = ({ children }) => {
         transactions: [newTx, ...prev.transactions]
       };
     });
+    addToast(`Withdrew $${parseFloat(amount).toLocaleString()} successfully!`, 'success');
     return true;
   };
 
@@ -372,14 +618,17 @@ export const AppProvider = ({ children }) => {
       createdAt: new Date().toISOString()
     };
     setAlerts([newAlert, ...alerts]);
+    addToast(`Price alert created for ${symbol} at $${parseFloat(value).toLocaleString()}!`, 'success');
   };
 
   const deleteAlert = (id) => {
     setAlerts(alerts.filter(a => a.id !== id));
+    addToast('Alert deleted successfully.', 'info');
   };
 
   const toggleAlertStatus = (id) => {
     setAlerts(alerts.map(a => a.id === id ? { ...a, isActive: !a.isActive } : a));
+    addToast('Alert status modified.', 'info');
   };
 
   // Core Price Alert Trigger Checker
@@ -452,6 +701,26 @@ export const AppProvider = ({ children }) => {
     }, 1500);
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const response = await apiRequest('/auth/profile', {
+        method: 'PUT',
+        body: profileData
+      });
+      if (response.success && response.data) {
+        const updated = response.data;
+        updated.role = updated.role ? updated.role.toUpperCase() : 'USER';
+        setUser(updated);
+        localStorage.setItem('cv_user', JSON.stringify(updated));
+        addToast('Profile updated successfully!', 'success');
+        return updated;
+      }
+    } catch (error) {
+      addToast(error.message || 'Failed to update profile', 'error');
+      throw error;
+    }
+  };
+
   return (
     <AppContext.Provider value={{
       user,
@@ -482,7 +751,20 @@ export const AppProvider = ({ children }) => {
       markNotificationAsRead,
       clearNotifications,
       askAIAssistant,
-      toggleMaintenanceMode
+      toggleMaintenanceMode,
+      language,
+      changeLanguage,
+      t,
+      theme,
+      toggleTheme,
+      mode,
+      toggleMode,
+      toasts,
+      addToast,
+      removeToast,
+      updateProfile,
+      isInstallable,
+      installApp
     }}>
       {children}
     </AppContext.Provider>

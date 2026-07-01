@@ -391,3 +391,55 @@ export const getUserProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @route   PUT /api/v1/auth/profile
+ * @desc    Update current user profile info (name, username, email, avatar)
+ * @access  Private
+ */
+export const updateUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return errorResponse(res, 404, 'User not found');
+    }
+
+    const { name, username, email, avatar } = req.body;
+
+    if (email && email.toLowerCase() !== user.email) {
+      const emailExists = await User.findOne({ email: email.toLowerCase() });
+      if (emailExists) {
+        return errorResponse(res, 400, 'User with this email already exists');
+      }
+      user.email = email.toLowerCase();
+    }
+
+    if (username && username !== user.username) {
+      const usernameExists = await User.findOne({ username });
+      if (usernameExists) {
+        return errorResponse(res, 400, 'User with this username already exists');
+      }
+      user.username = username;
+    }
+
+    if (name) user.name = name;
+    if (avatar) user.avatar = avatar;
+
+    await user.save();
+
+    return successResponse(res, 200, 'Profile updated successfully', {
+      _id: user._id,
+      name: user.name || user.username,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      cashUSD: user.cashUSD,
+      holdings: user.holdings,
+      watchlist: user.watchlist,
+      joinedDate: user.joinedDate
+    });
+  } catch (error) {
+    next(error);
+  }
+};

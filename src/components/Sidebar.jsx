@@ -15,30 +15,31 @@ import {
   ChevronLeft, 
   ChevronRight,
   Eye,
-  GitCompare
+  GitCompare,
+  Download
 } from 'lucide-react';
 
 export default function Sidebar({ collapsed, setCollapsed }) {
-  const { user, alerts } = useApp();
+  const { user, alerts, t, isInstallable, installApp } = useApp();
   const location = useLocation();
 
   const activeAlertsCount = alerts.filter(a => a.isActive).length;
 
   const menuItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Market', path: '/market', icon: TrendingUp },
-    { name: 'Portfolio', path: '/portfolio', icon: Briefcase },
-    { name: 'Watchlist', path: '/watchlist', icon: Star },
-    { name: 'AI Assistant', path: '/ai-assistant', icon: Bot, highlight: true },
-    { name: 'AI Analyzer',  path: '/ai-analyzer',  icon: Sliders },
-    { name: 'Compare Coins',path: '/compare',       icon: GitCompare },
-    { name: 'Alerts',       path: '/alerts',        icon: Bell, badge: activeAlertsCount > 0 ? activeAlertsCount : null },
-    { name: 'Reports', path: '/reports', icon: FileText },
-    { name: 'Profile', path: '/profile', icon: User },
+    { key: 'dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { key: 'market', path: '/market', icon: TrendingUp },
+    { key: 'portfolio', path: '/portfolio', icon: Briefcase },
+    { key: 'watchlist', path: '/watchlist', icon: Star },
+    { key: 'aiAssistant', path: '/ai-assistant', icon: Bot, highlight: true },
+    { key: 'aiAnalyzer',  path: '/ai-analyzer',  icon: Sliders },
+    { key: 'compareCoins',path: '/compare',       icon: GitCompare },
+    { key: 'alerts',       path: '/alerts',        icon: Bell, badge: activeAlertsCount > 0 ? activeAlertsCount : null },
+    { key: 'reports', path: '/reports', icon: FileText },
+    { key: 'profile', path: '/profile', icon: User },
   ];
 
   // If user is Admin or username is empty (let's display Admin anyway or dynamically based on user role)
-  const showAdmin = user && user.role === 'ADMIN';
+  const showAdmin = user && user.role && user.role.toUpperCase() === 'ADMIN';
 
   return (
     <aside 
@@ -71,6 +72,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
+          const displayName = t(item.key);
 
           return (
             <Link
@@ -88,14 +90,14 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               
               {!collapsed && (
                 <span className="text-sm font-medium tracking-wide">
-                  {item.name}
+                  {displayName}
                 </span>
               )}
 
               {/* Collapsed Tooltip */}
               {collapsed && (
                 <span className="absolute left-20 scale-0 group-hover:scale-100 bg-dark-900 border border-white/10 px-2 py-1 rounded text-xs text-white z-30 transition-transform origin-left pointer-events-none whitespace-nowrap shadow-lg">
-                  {item.name}
+                  {displayName}
                 </span>
               )}
 
@@ -123,14 +125,31 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             }`}
           >
             <ShieldAlert className={`w-5.5 h-5.5 flex-shrink-0 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
-            {!collapsed && <span className="text-sm font-medium">Admin Panel</span>}
+            {!collapsed && <span className="text-sm font-medium">{t('adminPanel')}</span>}
             
             {collapsed && (
               <span className="absolute left-20 scale-0 group-hover:scale-100 bg-dark-900 border border-white/10 px-2 py-1 rounded text-xs text-rose-400 z-30 transition-transform origin-left pointer-events-none whitespace-nowrap shadow-lg">
-                Admin Panel
+                {t('adminPanel')}
               </span>
             )}
           </Link>
+        )}
+
+        {/* PWA Install Trigger Button */}
+        {isInstallable && (
+          <button
+            onClick={installApp}
+            className="w-full flex items-center relative group rounded-lg p-2.5 transition-all duration-200 text-indigo-400 hover:bg-indigo-600/10 border border-indigo-500/10 mt-2 font-sans cursor-pointer"
+          >
+            <Download className={`w-5.5 h-5.5 flex-shrink-0 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
+            {!collapsed && <span className="text-sm font-semibold tracking-wide text-left">Install Terminal</span>}
+            
+            {collapsed && (
+              <span className="absolute left-20 scale-0 group-hover:scale-100 bg-dark-900 border border-white/10 px-2 py-1 rounded text-xs text-indigo-400 z-30 transition-transform origin-left pointer-events-none whitespace-nowrap shadow-lg">
+                Install Terminal
+              </span>
+            )}
+          </button>
         )}
       </nav>
 

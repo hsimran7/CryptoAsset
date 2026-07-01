@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApp } from '../context/AppContext';
 import { apiRequest } from '../utils/api';
 import { usePriceStore } from '../store/usePriceStore';
@@ -61,11 +62,20 @@ const CustomBarTooltip = ({ active, payload }) => {
 
 export default function Portfolio() {
   const { coins } = useApp();
-  const [assets, setAssets] = useState([]);
+  const queryClient = useQueryClient();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Fetch portfolio assets from database via React Query
+  const { data: assetsData, isLoading, error: assetsError } = useQuery({
+    queryKey: ['portfolio-assets'],
+    queryFn: () => apiRequest('/portfolio-assets').then(res => res.data?.assets || []),
+    placeholderData: (prev) => prev
+  });
+
+  const assets = assetsData || [];
+  const displayError = errorMessage || assetsError?.message || '';
 
   // Modals state
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -90,28 +100,6 @@ export default function Portfolio() {
     buyDate: '',
     notes: ''
   });
-
-  // Fetch portfolio assets from database
-  const loadPortfolio = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiRequest('/portfolio-assets');
-      if (res.success && res.data) {
-        setAssets(res.data.assets || []);
-      }
-    } catch (err) {
-      setErrorMessage(err.message || 'Failed to load portfolio assets.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const handle = setTimeout(() => {
-      loadPortfolio();
-    }, 0);
-    return () => clearTimeout(handle);
-  }, []);
 
   // Set default details in form when coin dropdown selection changes
   const handleCoinSelectChange = (e) => {
@@ -162,7 +150,7 @@ export default function Portfolio() {
           buyDate: new Date().toISOString().split('T')[0],
           notes: ''
         });
-        loadPortfolio();
+        queryClient.invalidateQueries({ queryKey: ['portfolio-assets'] });
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to add asset.');
@@ -195,7 +183,7 @@ export default function Portfolio() {
         setSuccessMessage('Asset updated successfully!');
         setIsEditOpen(false);
         setEditingAsset(null);
-        loadPortfolio();
+        queryClient.invalidateQueries({ queryKey: ['portfolio-assets'] });
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to update asset.');
@@ -213,7 +201,7 @@ export default function Portfolio() {
       });
       if (res.success) {
         setSuccessMessage('Asset entry deleted successfully.');
-        loadPortfolio();
+        queryClient.invalidateQueries({ queryKey: ['portfolio-assets'] });
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to delete asset.');
@@ -273,10 +261,10 @@ export default function Portfolio() {
           <button onClick={() => setSuccessMessage('')} className="ml-2 hover:text-white"><X className="w-3.5 h-3.5" /></button>
         </div>
       )}
-      {errorMessage && (
+      {displayError && (
         <div className="fixed top-4 right-4 z-50 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs px-4 py-3 rounded-lg flex items-center gap-2 shadow-2xl backdrop-blur-md">
           <AlertTriangle className="w-4.5 h-4.5" />
-          <span>{errorMessage}</span>
+          <span>{displayError}</span>
           <button onClick={() => setErrorMessage('')} className="ml-2 hover:text-white"><X className="w-3.5 h-3.5" /></button>
         </div>
       )}

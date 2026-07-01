@@ -185,3 +185,119 @@
   padding: 1px 4px;
 }
 
+/* --- Light Theme System --- */
+html.light {
+  /* Variable overrides */
+  --color-dark-950: #f8fafc; /* slate-50 */
+  --color-dark-900: #f1f5f9; /* slate-100 */
+  --color-dark-800: #e2e8f0; /* slate-200 */
+  --color-dark-700: #cbd5e1; /* slate-300 */
+  --color-dark-600: #94a3b8; /* slate-400 */
+}
+
+html.light body {
+  background-color: #f8fafc !important;
+  color: #1e293b !important; /* slate-800 */
+}
+
+/* Light Mode Card Overrides */
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+html.light .glass-panel-interactive {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+html.light .glass-panel-interactive:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
+}
+
+/* Text Overrides */
+html.light .text-white,
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light th {
+  color: #0f172a !important; /* slate-900 */
+}
+
+html.light .text-slate-100 { color: #1e293b !important; }
+html.light .text-slate-200 { color: #334155 !important; }
+html.light .text-slate-300 { color: #475569 !important; }
+html.light .text-slate-400 { color: #64748b !important; }
+html.light .text-slate-500 { color: #94a3b8 !important; }
+
+/* Grid and border overrides */
+html.light .terminal-grid {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+}
+
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-b,
+html.light .border-t,
+html.light .border-r,
+html.light .border-l,
+html.light .divide-y > * {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Background Opacity Adjustments */
+html.light .bg-white\/2 { background-color: rgba(0, 0, 0, 0.02) !important; }
+html.light .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04) !important; }
+html.light .bg-white\/10 { background-color: rgba(0, 0, 0, 0.08) !important; }
+html.light .bg-dark-900\/30 { background-color: rgba(0, 0, 0, 0.03) !important; }
+
+/* Scrollbar tweaks */
+html.light ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* Inputs and interactive items */
+html.light .glass-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+html.light .glass-input::placeholder {
+  color: #94a3b8 !important;
+}
+html.light .glass-input:focus {
+  background: #ffffff !important;
+  border-color: rgba(99, 102, 241, 0.6) !important;
+}
+
+html.light select,
+html.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html.light .btn-premium-dark {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+html.light .btn-premium-dark:hover {
+  background-color: #cbd5e1 !important;
+}
+
+/* Chart Tooltips */
+html.light .recharts-default-tooltip {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+

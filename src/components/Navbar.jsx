@@ -12,19 +12,107 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Menu,
-  X
+  X,
+  Mic,
+  Sun,
+  Moon,
+  Languages
 } from 'lucide-react';
 
 export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
-  const { user, coins, notifications, logoutUser, markNotificationAsRead, clearNotifications } = useApp();
+  const { 
+    user, 
+    coins, 
+    notifications, 
+    logoutUser, 
+    markNotificationAsRead, 
+    clearNotifications,
+    t,
+    theme,
+    toggleTheme,
+    language,
+    changeLanguage,
+    addToast
+  } = useApp();
   const livePrices = usePriceStore((state) => state.prices);
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
 
   const navigate = useNavigate();
   const notifRef = useRef(null);
   const searchRef = useRef(null);
+  const langRef = useRef(null);
+
+  // Voice Command / Voice Search Handler
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      addToast(t('voiceNotSupported'), 'error');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      addToast(t('voiceSearchActive'), 'info');
+    };
+
+    recognition.onresult = (event) => {
+      const speechToText = event.results[0][0].transcript.toLowerCase().trim();
+      addToast(`Heard: "${speechToText}"`, 'info');
+
+      // Command processing
+      if (speechToText.includes('dashboard') || speechToText.includes('tablero') || speechToText.includes('tableau')) {
+        navigate('/dashboard');
+        addToast('Redirecting to Dashboard...', 'success');
+      } else if (speechToText.includes('market') || speechToText.includes('mercado') || speechToText.includes('marché') || speechToText.includes('markt')) {
+        navigate('/market');
+        addToast('Redirecting to Market Feed...', 'success');
+      } else if (speechToText.includes('portfolio') || speechToText.includes('portafolio') || speechToText.includes('portefeuille')) {
+        navigate('/portfolio');
+        addToast('Redirecting to Portfolio...', 'success');
+      } else if (speechToText.includes('profile') || speechToText.includes('perfil') || speechToText.includes('profil')) {
+        navigate('/profile');
+        addToast('Redirecting to Profile...', 'success');
+      } else if (speechToText.includes('light theme') || speechToText.includes('light mode') || speechToText.includes('modo claro') || speechToText.includes('thème clair')) {
+        if (theme === 'dark') toggleTheme();
+      } else if (speechToText.includes('dark theme') || speechToText.includes('dark mode') || speechToText.includes('modo oscuro') || speechToText.includes('thème sombre')) {
+        if (theme === 'light') toggleTheme();
+      } else {
+        // Fallback to text search
+        setSearchQuery(speechToText);
+        setShowSearchDropdown(true);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error('[Speech Recognition Error]', event.error);
+      setIsListening(false);
+      addToast('Voice command capture failed or timed out.', 'warning');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -43,6 +131,9 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
       }
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchDropdown(false);
+      }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setShowLangDropdown(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -78,7 +169,7 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
           </div>
           <input
             type="text"
-            placeholder="Search coin details, tickers, pairs..."
+            placeholder={t('shortcutTip')}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -89,8 +180,17 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
                 setShowSearchDropdown(true);
               }
             }}
-            className="w-full pl-9 pr-4 py-1.5 text-xs glass-input focus:ring-1 focus:ring-indigo-500"
+            className="w-full pl-9 pr-10 py-1.5 text-xs glass-input focus:ring-1 focus:ring-indigo-500"
           />
+          <button
+            onClick={startListening}
+            className={`absolute inset-y-0 right-3 flex items-center transition-all ${
+              isListening ? 'text-rose-500 animate-pulse' : 'text-slate-400 hover:text-white'
+            }`}
+            title="Search by voice / say commands"
+          >
+            <Mic className="w-4 h-4" />
+          </button>
 
           {/* Search Results Dropdown */}
           {showSearchDropdown && searchResults.length > 0 && (
@@ -149,7 +249,36 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
       </div>
 
       {/* Right controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {/* Language Dropdown Selector */}
+        <div ref={langRef} className="relative">
+          <button
+            onClick={() => setShowLangDropdown(!showLangDropdown)}
+            className="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+            title="Change Language"
+          >
+            <Languages className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase">{language}</span>
+          </button>
+          {showLangDropdown && (
+            <div className="absolute right-0 top-11 w-32 glass-panel rounded-xl shadow-2xl border border-white/10 p-1.5 z-55 text-left">
+              <button onClick={() => { changeLanguage('en'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">English</button>
+              <button onClick={() => { changeLanguage('es'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Español</button>
+              <button onClick={() => { changeLanguage('fr'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Français</button>
+              <button onClick={() => { changeLanguage('de'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Deutsch</button>
+            </div>
+          )}
+        </div>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+          title="Toggle Dark/Light Mode"
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
+        </button>
+
         {/* Notifications Dropdown Toggle */}
         <div ref={notifRef} className="relative">
           <button

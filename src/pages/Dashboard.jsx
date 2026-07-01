@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useApp } from '../context/AppContext';
 import { usePriceStore } from '../store/usePriceStore';
 import { apiRequest } from '../utils/api';
@@ -28,27 +29,15 @@ const MOCK_GROWTH_DATA = [
 ];
 
 export default function Dashboard() {
-  const { coins, portfolio, alerts, notifications } = useApp();
+  const { coins, portfolio, alerts, notifications, t, mode } = useApp();
   const [chartInterval, setChartInterval] = useState('7D');
   const livePrices = usePriceStore((state) => state.prices);
-  const [assets, setAssets] = useState([]);
-
-  useEffect(() => {
-    const loadAssets = async () => {
-      try {
-        const res = await apiRequest('/portfolio-assets');
-        if (res.success && res.data) {
-          setAssets(res.data.assets || []);
-        }
-      } catch (err) {
-        console.error('Error loading dashboard assets:', err);
-      }
-    };
-    const handle = setTimeout(() => {
-      loadAssets();
-    }, 0);
-    return () => clearTimeout(handle);
-  }, []);
+  const { data: assetsData } = useQuery({
+    queryKey: ['portfolio-assets'],
+    queryFn: () => apiRequest('/portfolio-assets').then(res => res.data?.assets || []),
+    placeholderData: (prev) => prev
+  });
+  const assets = assetsData || [];
 
   // Compute stats dynamically
   const activeAlerts = alerts.filter(a => a.isActive).length;
@@ -86,7 +75,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-extrabold text-2xl md:text-3xl text-white tracking-tight">
-            Financial Dashboard
+            {t('dashboard')}
           </h1>
           <p className="text-slate-400 text-xs mt-1">Real-time portfolio intelligence and terminal controls.</p>
         </div>
@@ -102,7 +91,14 @@ export default function Dashboard() {
         {/* KPI: Net Worth */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between relative overflow-hidden">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Net Portfolio Value</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
+              {t('netPortfolioValue')}
+              {mode === 'beginner' && (
+                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="The combined USD value of all your holdings and cash.">
+                  (?)
+                </span>
+              )}
+            </span>
             <h3 className="text-xl font-bold text-white font-mono">${liveNetWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
             <span className={`text-[10px] font-bold flex items-center ${livePnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {livePnL >= 0 ? <TrendingUp className="w-3.5 h-3.5 mr-0.5" /> : <TrendingDown className="w-3.5 h-3.5 mr-0.5" />}
@@ -117,7 +113,14 @@ export default function Dashboard() {
         {/* KPI: Cash USD */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Available Balance</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
+              Available Balance
+              {mode === 'beginner' && (
+                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="The amount of USD cash you have to trade.">
+                  (?)
+                </span>
+              )}
+            </span>
             <h3 className="text-xl font-bold text-white font-mono">${portfolio.cashUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
             <span className="text-[10px] text-slate-400 font-medium">USD Cash reserves</span>
           </div>
@@ -129,7 +132,14 @@ export default function Dashboard() {
         {/* KPI: Active Alerts */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Active Price Alerts</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
+              Active Price Alerts
+              {mode === 'beginner' && (
+                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="Triggers that alert you when a coin price threshold is met.">
+                  (?)
+                </span>
+              )}
+            </span>
             <h3 className="text-xl font-bold text-white font-mono">{activeAlerts}</h3>
             <span className="text-[10px] text-slate-400 font-medium">Monitoring thresholds</span>
           </div>
@@ -141,7 +151,14 @@ export default function Dashboard() {
         {/* KPI: AI Advisor Signals */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">AI Buy/Sell Signals</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
+              AI Buy/Sell Signals
+              {mode === 'beginner' && (
+                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="Dynamic automated metrics suggesting purchase decisions.">
+                  (?)
+                </span>
+              )}
+            </span>
             <h3 className="text-xl font-bold text-white font-mono">{recentAiSignals}</h3>
             <span className="text-[10px] text-violet-400 font-bold flex items-center">
               <Sparkles className="w-3.5 h-3.5 mr-0.5" /> Recommended actions
@@ -161,6 +178,14 @@ export default function Dashboard() {
             <div>
               <h3 className="font-bold text-base text-white">Portfolio Valuation Index</h3>
               <p className="text-[11px] text-slate-400">Simulated growth curve index track.</p>
+              {mode === 'pro' && (
+                <div className="flex gap-3 text-[9px] font-mono text-slate-500 mt-1">
+                  <span>ALPHA: 0.12</span>
+                  <span>BETA: 1.08</span>
+                  <span>SHARPE: 2.14</span>
+                  <span>VOLATILITY (30D): 14.5%</span>
+                </div>
+              )}
             </div>
             <div className="flex bg-dark-900 border border-white/5 rounded-lg p-0.5 text-[10px]">
               {['24H', '7D', '30D', 'ALL'].map((interval) => (

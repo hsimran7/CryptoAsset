@@ -27,6 +27,7 @@ import coinRoutes from './routes/coinRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import newsRoutes from './routes/newsRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import { initSocket, closeSocket } from './utils/socketService.js';
 
 // Connect to MongoDB
@@ -77,6 +78,8 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Base route fallback
 app.get('/', (req, res) => {

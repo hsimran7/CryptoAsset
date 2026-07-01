@@ -8,7 +8,8 @@ import {
   forgotPassword,
   resetPassword,
   googleOAuthCallback,
-  getUserProfile
+  getUserProfile,
+  updateUserProfile
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authLimiter } from '../middleware/rateLimitMiddleware.js';
@@ -49,5 +50,6 @@ router.get(
 
 // Protected profile endpoint
 router.get('/me', protect, getUserProfile);
+router.put('/profile', protect, updateUserProfile);
 
 export default router;
