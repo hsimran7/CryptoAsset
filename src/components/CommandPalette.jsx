@@ -134,7 +134,7 @@ export default function CommandPalette({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-55 flex items-start justify-center pt-24 px-4 bg-dark-950/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-55 flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-[18px]">
       <div 
         onClick={onClose} 
         className="fixed inset-0 cursor-default" 

@@ -161,9 +161,9 @@ export default function AdminDashboard() {
   if (loading && stats.totalUsers === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-3">
-          <RefreshCw className="w-10 h-10 text-rose-500 animate-spin mx-auto" />
-          <p className="text-slate-400 text-sm">Synchronizing platform database metrics...</p>
+        <div className="text-center space-y-3 font-mono">
+          <RefreshCw className="w-8 h-8 text-white animate-spin mx-auto" />
+          <p className="text-slate-400 text-xs">Synchronizing platform database metrics...</p>
         </div>
       </div>
     );
@@ -174,8 +174,8 @@ export default function AdminDashboard() {
       {/* Header Panel */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-extrabold text-2xl md:text-3xl text-rose-400 tracking-tight flex items-center gap-2">
-            <ShieldAlert className="w-8 h-8 text-rose-500" /> Admin Command Center
+          <h1 className="font-sans font-bold text-2xl md:text-3xl text-white tracking-tight flex items-center gap-2">
+            <ShieldAlert className="w-7 h-7 text-white" /> Admin Command Center
           </h1>
           <p className="text-slate-400 text-xs mt-1">
             Audit platform statistics, manage global users, configure roles, and inspect reported issues.
@@ -183,54 +183,54 @@ export default function AdminDashboard() {
         </div>
         <button
           onClick={fetchAdminData}
-          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold transition-all self-start md:self-auto"
+          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold transition-all self-start md:self-auto cursor-pointer"
         >
-          <RefreshCw className="w-4 h-4" /> Refresh System data
+          <RefreshCw className="w-4 h-4" /> Refresh System Data
         </button>
       </div>
 
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-rose-300 font-medium">{error}</div>
+        <div className="bg-white/2 border border-white/10 p-4 rounded-xl flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-slate-300 font-medium">{error}</div>
         </div>
       )}
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-white/5 gap-2">
+      <div className="flex border-b border-white/5 gap-2 select-none">
         <button
           onClick={() => setActiveTab('stats')}
-          className={`px-5 py-3 text-xs font-bold transition-all relative ${
+          className={`px-5 py-3 text-xs font-bold transition-all relative cursor-pointer ${
             activeTab === 'stats' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           Overview &amp; Analytics
           {activeTab === 'stats' && (
-            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500" />
+            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('users')}
-          className={`px-5 py-3 text-xs font-bold transition-all relative flex items-center gap-1.5 ${
+          className={`px-5 py-3 text-xs font-bold transition-all relative flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'users' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Users className="w-4 h-4" />
           User Management ({usersList.length})
           {activeTab === 'users' && (
-            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500" />
+            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('issues')}
-          className={`px-5 py-3 text-xs font-bold transition-all relative flex items-center gap-1.5 ${
+          className={`px-5 py-3 text-xs font-bold transition-all relative flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'issues' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <HelpCircle className="w-4 h-4" />
           Reported Issues ({issuesList.filter(i => i.status !== 'resolved').length} open)
           {activeTab === 'issues' && (
-            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500" />
+            <motion.div layoutId="activeAdminTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
           )}
         </button>
       </div>
@@ -246,10 +246,10 @@ export default function AdminDashboard() {
           >
             {/* KPI Cards Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-panel rounded-xl border border-white/5 p-4.5">
+              <div className="glass-panel p-4.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Traders</span>
-                  <div className="w-8 h-8 rounded-lg bg-indigo-600/10 text-indigo-400 border border-indigo-500/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
                     <Users className="w-4 h-4" />
                   </div>
                 </div>
@@ -257,23 +257,23 @@ export default function AdminDashboard() {
                 <span className="text-[9px] text-slate-400 mt-1 block">Registered profiles</span>
               </div>
 
-              <div className="glass-panel rounded-xl border border-white/5 p-4.5">
+              <div className="glass-panel p-4.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Active (30d)</span>
-                  <div className="w-8 h-8 rounded-lg bg-emerald-600/10 text-emerald-400 border border-emerald-500/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
                     <Activity className="w-4 h-4" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-white font-mono mt-2">{stats.activeUsers}</h3>
-                <span className="text-[9px] text-emerald-400 font-bold mt-1 block">
+                <span className="text-[9px] text-accent-emerald font-bold mt-1 block font-mono">
                   {stats.totalUsers > 0 ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1) : 0}% ratio
                 </span>
               </div>
 
-              <div className="glass-panel rounded-xl border border-white/5 p-4.5">
+              <div className="glass-panel p-4.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Portfolios</span>
-                  <div className="w-8 h-8 rounded-lg bg-cyan-600/10 text-cyan-400 border border-cyan-500/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
                     <Database className="w-4 h-4" />
                   </div>
                 </div>
@@ -281,54 +281,54 @@ export default function AdminDashboard() {
                 <span className="text-[9px] text-slate-400 mt-1 block">Asset holdings recorded</span>
               </div>
 
-              <div className="glass-panel rounded-xl border border-white/5 p-4.5">
+              <div className="glass-panel p-4.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">AI Chats Filed</span>
-                  <div className="w-8 h-8 rounded-lg bg-violet-600/10 text-violet-400 border border-violet-500/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-white font-mono mt-2">{stats.totalAIChats}</h3>
-                <span className="text-[9px] text-slate-400 mt-1 block">Queries processed by LLM</span>
+                <span className="text-[9px] text-slate-400 mt-1 block font-mono">Queries processed by LLM</span>
               </div>
             </div>
 
             {/* Sub Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="glass-panel rounded-xl border border-white/5 p-4 flex items-center justify-between">
+              <div className="glass-panel p-4 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Watchlist items</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Watchlist Items</span>
                   <span className="text-lg font-bold text-white font-mono">{stats.totalWatchlists}</span>
                 </div>
-                <TrendingUp className="w-5 h-5 text-indigo-400 opacity-60" />
+                <TrendingUp className="w-5 h-5 text-white opacity-40" />
               </div>
-              <div className="glass-panel rounded-xl border border-white/5 p-4 flex items-center justify-between">
+              <div className="glass-panel p-4 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">AI Analyses Run</span>
                   <span className="text-lg font-bold text-white font-mono">{stats.totalAIAnalyses || 0}</span>
                 </div>
-                <Sparkles className="w-5 h-5 text-violet-400 opacity-60" />
+                <Sparkles className="w-5 h-5 text-white opacity-40" />
               </div>
-              <div className="glass-panel rounded-xl border border-white/5 p-4 flex items-center justify-between">
+              <div className="glass-panel p-4 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Price Alerts Set</span>
                   <span className="text-lg font-bold text-white font-mono">{stats.totalAlerts}</span>
                 </div>
-                <BadgeAlert className="w-5 h-5 text-amber-400 opacity-60" />
+                <BadgeAlert className="w-5 h-5 text-slate-400 opacity-60" />
               </div>
-              <div className="glass-panel rounded-xl border border-white/5 p-4 flex items-center justify-between">
+              <div className="glass-panel p-4 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Open Issues</span>
-                  <span className="text-lg font-bold text-rose-400 font-mono">{issuesOverview.openIssues}</span>
+                  <span className="text-lg font-bold text-accent-rose font-mono">{issuesOverview.openIssues}</span>
                 </div>
-                <AlertCircle className="w-5 h-5 text-rose-400 opacity-60" />
+                <AlertCircle className="w-5 h-5 text-accent-rose opacity-60" />
               </div>
             </div>
 
             {/* Analytics Chart & Recent Users */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* AI Usage Analytics Area Chart */}
-              <div className="glass-panel rounded-xl border border-white/5 p-5 lg:col-span-2 space-y-4">
+              <div className="glass-panel p-5 lg:col-span-2 space-y-4">
                 <div>
                   <h3 className="font-bold text-base text-white">AI Assistant Co-Pilot Usage</h3>
                   <p className="text-xs text-slate-400">Total daily chat questions vs portfolio analyses generated.</p>
@@ -340,42 +340,42 @@ export default function AdminDashboard() {
                       <AreaChart data={aiUsage} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
                           <linearGradient id="colorChats" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#818cf8" stopOpacity={0.25}/>
-                            <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0}/>
                           </linearGradient>
                           <linearGradient id="colorAnalyses" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#a78bfa" stopOpacity={0.25}/>
-                            <stop offset="95%" stopColor="#a78bfa" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#888888" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#888888" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.015)" />
                         <XAxis 
                           dataKey="date" 
-                          stroke="rgba(255,255,255,0.3)" 
+                          stroke="rgba(255,255,255,0.2)" 
                           fontSize={9}
                           tickLine={false}
                         />
                         <YAxis 
-                          stroke="rgba(255,255,255,0.3)" 
+                          stroke="rgba(255,255,255,0.2)" 
                           fontSize={9}
                           tickLine={false}
                           allowDecimals={false}
                         />
                         <Tooltip 
                           contentStyle={{ 
-                            backgroundColor: '#0b0f19', 
-                            borderColor: 'rgba(255,255,255,0.1)',
+                            backgroundColor: '#0B0B0B', 
+                            borderColor: 'rgba(255,255,255,0.08)',
                             borderRadius: '12px'
                           }} 
-                          labelClassName="text-slate-400 text-xs"
+                          labelClassName="text-slate-500 text-xs font-mono"
                         />
                         <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }} />
                         <Area 
                           name="LLM Chats" 
                           type="monotone" 
                           dataKey="chats" 
-                          stroke="#818cf8" 
-                          strokeWidth={2}
+                          stroke="#FFFFFF" 
+                          strokeWidth={1.5}
                           fillOpacity={1} 
                           fill="url(#colorChats)" 
                         />
@@ -383,15 +383,15 @@ export default function AdminDashboard() {
                           name="Portfolio Analyses" 
                           type="monotone" 
                           dataKey="analyses" 
-                          stroke="#a78bfa" 
-                          strokeWidth={2}
+                          stroke="#888888" 
+                          strokeWidth={1.5}
                           fillOpacity={1} 
                           fill="url(#colorAnalyses)" 
                         />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-xs">
+                    <div className="h-full flex items-center justify-center text-slate-500 text-xs font-mono">
                       No active AI usage records found over the past 14 days.
                     </div>
                   )}
@@ -399,7 +399,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Recent Users List */}
-              <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col space-y-4">
+              <div className="glass-panel p-5 flex flex-col space-y-4">
                 <div>
                   <h3 className="font-bold text-base text-white">Recent Registrations</h3>
                   <p className="text-xs text-slate-400">Newly registered trading accounts.</p>
@@ -418,15 +418,13 @@ export default function AdminDashboard() {
                           <span className="text-xs font-bold text-white block leading-tight">
                             {u.name || u.username || 'Anonymous'}
                           </span>
-                          <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-mono">
                             <Mail className="w-3 h-3" /> {u.email}
                           </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded ${
-                          u.role === 'admin' ? 'bg-rose-500/10 text-rose-400' : 'bg-indigo-500/10 text-indigo-400'
-                        } uppercase`}>
+                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white uppercase font-mono">
                           {u.role}
                         </span>
                         <span className="text-[9px] text-slate-500 font-mono block mt-1">
@@ -446,14 +444,14 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="glass-panel rounded-xl border border-white/5 overflow-hidden"
+            className="glass-panel overflow-hidden"
           >
             <div className="p-5 border-b border-white/5 bg-white/2 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-base text-white">System User Directory</h3>
                 <p className="text-xs text-slate-400">Promote roles, inspect registration properties, or terminate user nodes.</p>
               </div>
-              <span className="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 px-2 py-1 rounded-md font-bold">
+              <span className="text-[10px] bg-white/5 text-white border border-white/10 px-2 py-1 rounded-md font-bold font-mono">
                 {usersList.length} Accounts Active
               </span>
             </div>
@@ -461,7 +459,7 @@ export default function AdminDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-white/5 bg-white/2 text-slate-400 font-semibold">
+                  <tr className="border-b border-white/5 bg-white/2 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
                     <th className="p-4">User</th>
                     <th className="p-4">Cash USD</th>
                     <th className="p-4">Joined Date</th>
@@ -483,9 +481,9 @@ export default function AdminDashboard() {
                             />
                             <div>
                               <span className="font-bold text-white block">
-                                {u.name || u.username} {isSelf && <span className="text-[9px] text-rose-400 font-bold">(You)</span>}
+                                {u.name || u.username} {isSelf && <span className="text-[9px] text-slate-400 font-bold">(You)</span>}
                               </span>
-                              <span className="text-[10px] text-slate-400 font-mono block">{u.email}</span>
+                              <span className="text-[10px] text-slate-500 font-mono block">{u.email}</span>
                             </div>
                           </div>
                         </td>
@@ -493,7 +491,7 @@ export default function AdminDashboard() {
                           ${(u.cashUSD || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="p-4 text-slate-400">
-                          <span className="flex items-center gap-1.5">
+                          <span className="flex items-center gap-1.5 font-mono">
                             <Clock className="w-3.5 h-3.5 text-slate-500" />
                             {new Date(u.joinedDate || u.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                           </span>
@@ -503,7 +501,7 @@ export default function AdminDashboard() {
                             value={u.role.toUpperCase()}
                             disabled={isSelf}
                             onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                            className="bg-dark-900 border border-white/10 rounded-lg text-slate-200 text-xs px-2 py-1 focus:ring-1 focus:ring-rose-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed font-semibold cursor-pointer"
+                            className="bg-dark-900 border border-white/10 rounded-lg text-slate-200 text-xs px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed font-semibold cursor-pointer"
                           >
                             <option value="USER">USER</option>
                             <option value="ADMIN">ADMIN</option>
@@ -513,12 +511,12 @@ export default function AdminDashboard() {
                           <div className="flex items-center justify-center gap-2">
                             {isSelf ? (
                               <span className="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
-                                <ShieldCheck className="w-4 h-4 text-rose-500" /> Primary admin
+                                <ShieldCheck className="w-4 h-4 text-white" /> Primary Admin
                               </span>
                             ) : (
                               <button
                                 onClick={() => handleDeleteUser(u._id, u.name || u.username || u.email, u.email)}
-                                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/10 hover:border-rose-500/20 transition-all"
+                                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all cursor-pointer"
                                 title="Terminate user account"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -544,21 +542,21 @@ export default function AdminDashboard() {
           >
             {/* Summary counters for issues */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-panel border border-white/5 p-4 rounded-xl">
+              <div className="glass-panel p-4">
                 <span className="text-[10px] text-slate-500 font-bold block uppercase">Total Reports</span>
                 <span className="text-xl font-bold font-mono text-white mt-1 block">{issuesOverview.totalIssues}</span>
               </div>
-              <div className="glass-panel border border-white/5 p-4 rounded-xl">
+              <div className="glass-panel p-4">
                 <span className="text-[10px] text-slate-500 font-bold block uppercase">Open Issues</span>
-                <span className="text-xl font-bold font-mono text-red-400 mt-1 block">{issuesOverview.openIssues}</span>
+                <span className="text-xl font-bold font-mono text-accent-rose mt-1 block">{issuesOverview.openIssues}</span>
               </div>
-              <div className="glass-panel border border-white/5 p-4 rounded-xl">
+              <div className="glass-panel p-4">
                 <span className="text-[10px] text-slate-500 font-bold block uppercase">In-Progress</span>
-                <span className="text-xl font-bold font-mono text-amber-400 mt-1 block">{issuesOverview.inProgressIssues}</span>
+                <span className="text-xl font-bold font-mono text-slate-400 mt-1 block">{issuesOverview.inProgressIssues}</span>
               </div>
-              <div className="glass-panel border border-white/5 p-4 rounded-xl">
+              <div className="glass-panel p-4">
                 <span className="text-[10px] text-slate-500 font-bold block uppercase">Resolved</span>
-                <span className="text-xl font-bold font-mono text-emerald-400 mt-1 block">{issuesOverview.resolvedIssues}</span>
+                <span className="text-xl font-bold font-mono text-accent-emerald mt-1 block">{issuesOverview.resolvedIssues}</span>
               </div>
             </div>
 
@@ -568,14 +566,14 @@ export default function AdminDashboard() {
                 issuesList.map((issue) => (
                   <div 
                     key={issue._id} 
-                    className="glass-panel border border-white/5 p-4.5 rounded-xl flex flex-col md:flex-row md:items-start justify-between gap-4 text-left hover:border-white/10 transition-all"
+                    className="glass-panel p-4.5 flex flex-col md:flex-row md:items-start justify-between gap-4 text-left hover:border-white/10 transition-all"
                   >
                     <div className="space-y-2 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                          issue.status === 'open' ? 'bg-red-500/10 text-red-400' :
-                          issue.status === 'in-progress' ? 'bg-amber-500/10 text-amber-400' :
-                          'bg-emerald-500/10 text-emerald-400'
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                          issue.status === 'open' ? 'bg-white/10 text-accent-rose border-white/5' :
+                          issue.status === 'in-progress' ? 'bg-white/5 text-slate-400 border-white/5' :
+                          'bg-white/10 text-accent-emerald border-white/5'
                         }`}>
                           {issue.status}
                         </span>
@@ -587,7 +585,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-4 text-[10px] text-slate-400">
                         {issue.user ? (
                           <span className="flex items-center gap-1">
-                            <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
+                            <UserCheck className="w-3.5 h-3.5 text-white" />
                             Registered: {issue.user.name || issue.user.email}
                           </span>
                         ) : (
@@ -597,7 +595,7 @@ export default function AdminDashboard() {
                           </span>
                         )}
                         <span>•</span>
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 font-mono">
                           <Clock className="w-3.5 h-3.5 text-slate-500" />
                           {new Date(issue.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                         </span>
@@ -607,9 +605,9 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3 self-end md:self-center">
                       <label className="text-[10px] font-bold text-slate-400">Status:</label>
                       <select
-                        value={issue.status}
-                        onChange={(e) => handleIssueStatusChange(issue._id, e.target.value)}
-                        className="bg-dark-900 border border-white/10 rounded-lg text-slate-200 text-xs px-2 py-1 outline-none font-semibold cursor-pointer"
+                         value={issue.status}
+                         onChange={(e) => handleIssueStatusChange(issue._id, e.target.value)}
+                         className="bg-dark-900 border border-white/10 rounded-lg text-slate-200 text-xs px-2 py-1 outline-none font-semibold cursor-pointer"
                       >
                         <option value="open">Open</option>
                         <option value="in-progress">In-Progress</option>
@@ -619,7 +617,7 @@ export default function AdminDashboard() {
                   </div>
                 ))
               ) : (
-                <div className="glass-panel border border-white/5 p-12 text-center rounded-xl text-slate-500 text-xs">
+                <div className="glass-panel p-12 text-center text-slate-500 text-xs">
                   <HelpCircle className="w-8 h-8 mx-auto text-slate-600 mb-2" />
                   No customer reports or support issues have been submitted to the platform.
                 </div>

@@ -208,7 +208,7 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <span className="font-semibold text-slate-200">${coin.price.toLocaleString()}</span>
-                    <span className={`flex items-center text-[10px] font-bold ${coin.change24h >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    <span className={`flex items-center text-[10px] font-bold ${coin.change24h >= 0 ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                       {coin.change24h >= 0 ? '+' : ''}{coin.change24h}%
                     </span>
                   </div>
@@ -239,7 +239,7 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
               <span className={`text-white font-mono font-semibold transition-all ${flashClass}`}>
                 ${liveData.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
-              <span className={`flex items-center font-bold ${isUp ? 'text-emerald-500' : 'text-rose-500'}`}>
+              <span className={`flex items-center font-bold ${isUp ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                 {isUp ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}
                 {isUp ? '+' : ''}{liveData.change24h.toFixed(2)}%
               </span>
@@ -261,12 +261,18 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
             <span className="text-[10px] font-bold uppercase">{language}</span>
           </button>
           {showLangDropdown && (
-            <div className="absolute right-0 top-11 w-32 glass-panel rounded-xl shadow-2xl border border-white/10 p-1.5 z-55 text-left">
-              <button onClick={() => { changeLanguage('en'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">English</button>
-              <button onClick={() => { changeLanguage('es'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Español</button>
-              <button onClick={() => { changeLanguage('fr'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Français</button>
-              <button onClick={() => { changeLanguage('de'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Deutsch</button>
-            </div>
+            <>
+              <div 
+                onClick={() => setShowLangDropdown(false)}
+                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[18px]"
+              />
+              <div className="absolute right-0 top-11 w-32 glass-panel rounded-xl shadow-2xl border border-white/10 p-1.5 z-55 text-left">
+                <button onClick={() => { changeLanguage('en'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">English</button>
+                <button onClick={() => { changeLanguage('es'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Español</button>
+                <button onClick={() => { changeLanguage('fr'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Français</button>
+                <button onClick={() => { changeLanguage('de'); setShowLangDropdown(false); }} className="w-full text-left text-xs font-semibold px-2 py-1.5 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white">Deutsch</button>
+              </div>
+            </>
           )}
         </div>
 
@@ -276,7 +282,7 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
           className="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
           title="Toggle Dark/Light Mode"
         >
-          {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
+          {theme === 'dark' ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-slate-400" />}
         </button>
 
         {/* Notifications Dropdown Toggle */}
@@ -287,20 +293,25 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1.5 bg-rose-500 text-white font-bold text-[9px] w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
+              <span className="absolute top-1.5 right-1.5 bg-white text-black font-bold text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center border border-black">
                 {unreadCount}
               </span>
             )}
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-11 w-80 glass-panel rounded-xl shadow-2xl border border-white/10 p-2 z-50 text-left">
+            <>
+              <div 
+                onClick={() => setShowNotifications(false)}
+                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[18px]"
+              />
+              <div className="absolute right-0 top-11 w-80 glass-panel rounded-xl shadow-2xl border border-white/10 p-2 z-50 text-left">
               <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
                 <span className="font-bold text-xs text-white">Notifications ({unreadCount})</span>
                 {notifications.length > 0 && (
                   <button 
                     onClick={clearNotifications}
-                    className="text-[10px] text-indigo-400 hover:text-indigo-300 hover:underline"
+                    className="text-[10px] text-slate-400 hover:text-white hover:underline"
                   >
                     Clear all
                   </button>
@@ -315,12 +326,12 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
                       key={notif.id}
                       onClick={() => markNotificationAsRead(notif.id)}
                       className={`p-3 rounded-lg hover:bg-white/5 cursor-pointer transition-colors ${
-                        notif.read ? 'opacity-60' : 'bg-indigo-500/5 border-l-2 border-indigo-500'
+                        notif.read ? 'opacity-60' : 'bg-white/2 border-l-2 border-white'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-1">
                         <span className="font-bold text-xs text-white flex items-center gap-1.5">
-                          {notif.type === 'ai' && <Sparkles className="w-3.5 h-3.5 text-violet-400" />}
+                          {notif.type === 'ai' && <Sparkles className="w-3.5 h-3.5 text-white" />}
                           {notif.title}
                         </span>
                         <span className="text-[9px] text-slate-500">{notif.time}</span>
@@ -331,7 +342,8 @@ export default function Navbar({ onToggleMobileMenu, mobileMenuOpen }) {
                 )}
               </div>
             </div>
-          )}
+          </>
+        )}
         </div>
 
         {/* User Account Controls */}

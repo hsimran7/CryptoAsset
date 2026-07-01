@@ -13,13 +13,13 @@ const getToken = () => localStorage.getItem('token');
 /* ─── Sentiment badge ─────────────────────────────────── */
 function SentimentBadge({ sentiment, small = false }) {
   const cfg = {
-    Positive: { color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/25', Icon: ThumbsUp },
-    Negative: { color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', Icon: ThumbsDown },
-    Neutral:  { color: 'text-amber-400 bg-amber-500/10 border-amber-500/25', Icon: Minus }
+    Positive: { color: 'text-accent-emerald bg-white/5 border-white/10', Icon: ThumbsUp },
+    Negative: { color: 'text-accent-rose bg-white/5 border-white/10', Icon: ThumbsDown },
+    Neutral:  { color: 'text-slate-400 bg-white/5 border-white/10', Icon: Minus }
   };
   const { color, Icon } = cfg[sentiment] || cfg.Neutral;
   return (
-    <span className={`inline-flex items-center gap-1 border rounded-full font-bold ${small ? 'text-[9px] px-1.5 py-0.5' : 'text-[10px] px-2 py-0.5'} ${color}`}>
+    <span className={`inline-flex items-center gap-1.5 border rounded-full font-bold uppercase tracking-wider ${small ? 'text-[8px] px-1.5 py-0.5' : 'text-[9px] px-2.5 py-0.5'} ${color}`}>
       <Icon className={small ? 'w-2.5 h-2.5' : 'w-3 h-3'} /> {sentiment}
     </span>
   );
@@ -37,15 +37,15 @@ function OverallSentimentBar({ sentiment, articles }) {
         <span className="text-slate-400 font-semibold uppercase tracking-wider">Overall Market Sentiment</span>
         <SentimentBadge sentiment={sentiment} />
       </div>
-      <div className="flex h-2 rounded-full overflow-hidden gap-0.5">
-        <div className="bg-emerald-500 rounded-l-full transition-all" style={{ width: `${(counts.Positive / total) * 100}%` }} />
-        <div className="bg-amber-500 transition-all" style={{ width: `${(counts.Neutral / total) * 100}%` }} />
-        <div className="bg-rose-500 rounded-r-full transition-all" style={{ width: `${(counts.Negative / total) * 100}%` }} />
+      <div className="flex h-1.5 rounded-full overflow-hidden gap-0.5 bg-white/5">
+        <div className="bg-white rounded-l-full transition-all" style={{ width: `${(counts.Positive / total) * 100}%` }} />
+        <div className="bg-slate-400 transition-all" style={{ width: `${(counts.Neutral / total) * 100}%` }} />
+        <div className="bg-slate-700 rounded-r-full transition-all" style={{ width: `${(counts.Negative / total) * 100}%` }} />
       </div>
-      <div className="flex gap-3 text-[9px] text-slate-500">
-        <span><span className="text-emerald-400 font-bold">{counts.Positive}</span> Positive</span>
-        <span><span className="text-amber-400 font-bold">{counts.Neutral}</span> Neutral</span>
-        <span><span className="text-rose-400 font-bold">{counts.Negative}</span> Negative</span>
+      <div className="flex gap-3 text-[9px] text-slate-500 font-mono">
+        <span><span className="text-white font-bold">{counts.Positive}</span> Positive</span>
+        <span><span className="text-slate-400 font-bold">{counts.Neutral}</span> Neutral</span>
+        <span><span className="text-slate-600 font-bold">{counts.Negative}</span> Negative</span>
       </div>
     </div>
   );
@@ -90,13 +90,13 @@ export default function DailySummaryWidget() {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="glass-panel rounded-2xl border border-white/5 p-5 space-y-4">
+      <div className="glass-panel p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-violet-400 animate-pulse" />
+          <Sparkles className="w-4 h-4 text-white" />
           <span className="text-xs font-bold text-slate-300">AI Daily Summary</span>
         </div>
-        <div className="flex items-center justify-center py-10 gap-3 text-slate-500 text-xs">
-          <span className="w-4 h-4 border-2 border-white/10 border-t-violet-400 rounded-full animate-spin" />
+        <div className="flex items-center justify-center py-10 gap-3 text-slate-500 text-xs font-mono">
+          <span className="w-3.5 h-3.5 border-2 border-white/10 border-t-white rounded-full animate-spin" />
           Generating today's market intelligence…
         </div>
       </div>
@@ -106,16 +106,16 @@ export default function DailySummaryWidget() {
   /* ── Error ── */
   if (error || !data) {
     return (
-      <div className="glass-panel rounded-2xl border border-white/5 p-5 space-y-3">
+      <div className="glass-panel p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-violet-400" />
+          <Sparkles className="w-4 h-4 text-white" />
           <span className="text-xs font-bold text-slate-300">AI Daily Summary</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3">
-          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 text-xs text-slate-300 bg-white/2 border border-white/5 rounded-xl p-3">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0 text-slate-400" />
           {error || 'Summary unavailable.'}
         </div>
-        <button onClick={load} className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+        <button onClick={load} className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer">
           <RefreshCw className="w-3 h-3" /> Retry
         </button>
       </div>
@@ -129,21 +129,21 @@ export default function DailySummaryWidget() {
   ];
 
   return (
-    <div className="glass-panel rounded-2xl border border-white/5 overflow-hidden">
+    <div className="glass-panel overflow-hidden">
 
       {/* ── Header ── */}
       <div className="px-5 pt-5 pb-3 space-y-3 border-b border-white/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500/30 to-indigo-600/30 border border-violet-500/20 flex items-center justify-center">
-              <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+          <div className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
             </span>
             <div>
-              <p className="text-xs font-extrabold text-white">AI Daily Market Summary</p>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-xs font-bold text-white">AI Daily Market Summary</p>
+              <p className="text-[10px] text-slate-500 font-mono">
                 {new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                 {' · '}
-                <span className={`font-bold ${data.overallSentiment === 'Positive' ? 'text-emerald-400' : data.overallSentiment === 'Negative' ? 'text-rose-400' : 'text-amber-400'}`}>
+                <span className={`font-bold ${data.overallSentiment === 'Positive' ? 'text-accent-emerald' : data.overallSentiment === 'Negative' ? 'text-accent-rose' : 'text-slate-400'}`}>
                   {data.overallSentiment} Sentiment
                 </span>
               </p>
@@ -152,20 +152,20 @@ export default function DailySummaryWidget() {
           <button
             onClick={load}
             title="Refresh"
-            className="w-6 h-6 rounded-lg border border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-300 hover:border-white/20 transition-all"
+            className="w-6 h-6 rounded-lg border border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-300 hover:border-white/20 transition-all cursor-pointer"
           >
             <RefreshCw className="w-3 h-3" />
           </button>
         </div>
 
         {/* Tab bar */}
-        <div className="flex bg-dark-900/60 rounded-lg p-0.5 text-[10px] gap-0.5">
+        <div className="flex bg-black/40 border border-white/5 rounded-lg p-0.5 text-[10px] gap-0.5">
           {tabs.map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md font-bold transition-all ${
-                activeTab === id ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
+                activeTab === id ? 'bg-white text-black shadow' : 'text-slate-400 hover:text-white'
               }`}
             >
               <Icon className="w-3 h-3" /> {label}
@@ -181,24 +181,28 @@ export default function DailySummaryWidget() {
         {activeTab === 'summary' && (
           <div className="space-y-4">
             {/* Mode toggle */}
-            <div className="flex items-center gap-2">
+            <div className="flex bg-black/40 border border-white/5 rounded-lg p-0.5 text-[10px] gap-0.5 w-44">
               <button
                 onClick={() => setMode('beginner')}
-                className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all ${mode === 'beginner' ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' : 'border-white/5 text-slate-500 hover:text-slate-300'}`}
+                className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-md font-bold transition-all cursor-pointer ${
+                  mode === 'beginner' ? 'bg-white text-black shadow' : 'text-slate-400 hover:text-white'
+                }`}
               >
                 <BookOpen className="w-3 h-3" /> Beginner
               </button>
               <button
                 onClick={() => setMode('pro')}
-                className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all ${mode === 'pro' ? 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300' : 'border-white/5 text-slate-500 hover:text-slate-300'}`}
+                className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-md font-bold transition-all cursor-pointer ${
+                  mode === 'pro' ? 'bg-white text-black shadow' : 'text-slate-400 hover:text-white'
+                }`}
               >
                 <Terminal className="w-3 h-3" /> Pro
               </button>
             </div>
 
             {/* AI narrative */}
-            <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3.5">
-              <p className="text-xs text-slate-300 leading-relaxed">
+            <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3.5">
+              <p className="text-xs text-slate-300 leading-relaxed font-sans">
                 {mode === 'beginner' ? data.beginnerSummary : data.aiSummary}
               </p>
             </div>
@@ -212,18 +216,18 @@ export default function DailySummaryWidget() {
             <div className="grid grid-cols-2 gap-3 pt-1">
               {/* Top gainer */}
               {data.topGainers?.[0] && (
-                <div className="bg-emerald-500/[0.06] border border-emerald-500/15 rounded-xl p-2.5 space-y-0.5">
-                  <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Top Gainer</p>
-                  <p className="text-xs font-bold text-white">{data.topGainers[0].symbol}</p>
-                  <p className="text-[10px] text-emerald-400 font-bold">+{data.topGainers[0].change24h}%</p>
+                <div className="bg-white/3 border border-white/5 rounded-xl p-2.5 space-y-0.5">
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1"><TrendingUp className="w-3 h-3 text-accent-emerald" /> Top Gainer</p>
+                  <p className="text-xs font-bold text-white font-mono">{data.topGainers[0].symbol}</p>
+                  <p className="text-[10px] text-accent-emerald font-bold font-mono">+{data.topGainers[0].change24h}%</p>
                 </div>
               )}
               {/* Top loser */}
               {data.topLosers?.[0] && (
-                <div className="bg-rose-500/[0.06] border border-rose-500/15 rounded-xl p-2.5 space-y-0.5">
-                  <p className="text-[9px] text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1"><TrendingDown className="w-3 h-3" /> Top Loser</p>
-                  <p className="text-xs font-bold text-white">{data.topLosers[0].symbol}</p>
-                  <p className="text-[10px] text-rose-400 font-bold">{data.topLosers[0].change24h}%</p>
+                <div className="bg-white/3 border border-white/5 rounded-xl p-2.5 space-y-0.5">
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1"><TrendingDown className="w-3 h-3 text-accent-rose" /> Top Loser</p>
+                  <p className="text-xs font-bold text-white font-mono">{data.topLosers[0].symbol}</p>
+                  <p className="text-[10px] text-accent-rose font-bold font-mono">{data.topLosers[0].change24h}%</p>
                 </div>
               )}
             </div>
@@ -245,7 +249,7 @@ export default function DailySummaryWidget() {
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="text-[10px] text-slate-600 font-bold w-4">#{i + 1}</span>
-                    {coin.thumb && <img src={coin.thumb} alt={coin.symbol} className="w-5 h-5 rounded-full" />}
+                    {coin.thumb && <img src={coin.thumb} alt={coin.symbol} className="w-5 h-5 rounded-full filter grayscale" />}
                     <div>
                       <p className="text-xs font-bold text-white">{coin.symbol}</p>
                       <p className="text-[10px] text-slate-500">{coin.name}</p>
@@ -261,17 +265,17 @@ export default function DailySummaryWidget() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   {(data.topGainers || []).slice(0, 4).map(g => (
-                    <div key={g.id} className="flex items-center justify-between text-[10px] px-2 py-1 rounded-lg bg-emerald-500/[0.05] border border-emerald-500/10">
+                    <div key={g.id} className="flex items-center justify-between text-[10px] px-2 py-1 rounded-lg bg-white/3 border border-white/5 font-mono">
                       <span className="text-white font-bold">{g.symbol}</span>
-                      <span className="text-emerald-400 font-bold">+{g.change24h}%</span>
+                      <span className="text-accent-emerald font-bold">+{g.change24h}%</span>
                     </div>
                   ))}
                 </div>
                 <div className="space-y-1">
                   {(data.topLosers || []).slice(0, 4).map(l => (
-                    <div key={l.id} className="flex items-center justify-between text-[10px] px-2 py-1 rounded-lg bg-rose-500/[0.05] border border-rose-500/10">
+                    <div key={l.id} className="flex items-center justify-between text-[10px] px-2 py-1 rounded-lg bg-white/3 border border-white/5 font-mono">
                       <span className="text-white font-bold">{l.symbol}</span>
-                      <span className="text-rose-400 font-bold">{l.change24h}%</span>
+                      <span className="text-accent-rose font-bold">{l.change24h}%</span>
                     </div>
                   ))}
                 </div>
@@ -293,7 +297,7 @@ export default function DailySummaryWidget() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.05] transition-all group"
+                      className="block p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all group"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-xs text-slate-200 font-semibold leading-snug group-hover:text-white transition-colors line-clamp-2">
@@ -304,7 +308,7 @@ export default function DailySummaryWidget() {
                       <div className="flex items-center justify-between mt-2">
                         <SentimentBadge sentiment={item.sentiment} small />
                         {item.explanation && (
-                          <p className="text-[9px] text-slate-600 truncate max-w-[180px]">{item.explanation}</p>
+                          <p className="text-[9px] text-slate-600 truncate max-w-[180px] font-mono">{item.explanation}</p>
                         )}
                       </div>
                     </a>
@@ -322,8 +326,8 @@ export default function DailySummaryWidget() {
       </div>
 
       {/* ── Footer ── */}
-      <div className="px-5 pb-4">
-        <p className="text-[9px] text-slate-600 leading-relaxed">
+      <div className="px-5 pb-4 border-t border-white/5 pt-3">
+        <p className="text-[9px] text-slate-600 leading-relaxed font-mono">
           ⚠️ Educational information only. Not financial advice. Refreshes once per day at midnight UTC.
         </p>
       </div>

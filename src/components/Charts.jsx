@@ -13,34 +13,25 @@ export const Sparkline = ({ data = [], isPositive = true, width = 120, height = 
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
 
-  const strokeColor = isPositive ? '#10b981' : '#f43f5e';
+  // Monochrome Luxury Palette: positive light grey-green, negative light grey-red
+  const strokeColor = isPositive ? '#D4FFD6' : '#FFB5B5';
 
   return (
     <svg width={width} height={height} className="overflow-visible">
-      <defs>
-        <filter id={`glow-${isPositive ? 'green' : 'red'}`} x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
       <polyline
         fill="none"
         stroke={strokeColor}
-        strokeWidth="2"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         points={points}
-        filter={`url(#glow-${isPositive ? 'green' : 'red'})`}
       />
     </svg>
   );
 };
 
 // 2. INTERACTIVE AREA CHART (For main dashboards and coin detail grids)
-export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
+export const AreaChart = ({ data = [], height = 300 }) => {
   const [hoverIndex, setHoverIndex] = useState(null);
   const [containerWidth, setContainerWidth] = useState(500);
   const containerRef = useRef(null);
@@ -98,12 +89,8 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
       <svg width={containerWidth} height={height} className="overflow-visible">
         <defs>
           <linearGradient id="chart-area-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.0" />
-          </linearGradient>
-          <linearGradient id="grid-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.03)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 
@@ -117,7 +104,7 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
               y1={y} 
               x2={containerWidth} 
               y2={y} 
-              stroke="rgba(255,255,255,0.04)" 
+              stroke="rgba(255, 255, 255, 0.04)" 
               strokeDasharray="4 4" 
             />
           );
@@ -133,7 +120,7 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
               y1="0" 
               x2={x} 
               y2={height} 
-              stroke="rgba(255,255,255,0.02)" 
+              stroke="rgba(255, 255, 255, 0.02)" 
             />
           );
         })}
@@ -145,8 +132,8 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
         <path 
           d={pathString} 
           fill="none" 
-          stroke={color} 
-          strokeWidth="2.5" 
+          stroke="#FFFFFF" 
+          strokeWidth="1.5" 
           strokeLinecap="round" 
           strokeLinejoin="round" 
         />
@@ -160,23 +147,23 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
               y1="0" 
               x2={selectedPoint.x} 
               y2={height} 
-              stroke="rgba(255,255,255,0.15)" 
+              stroke="rgba(255, 255, 255, 0.15)" 
               strokeDasharray="3 3" 
             />
             {/* Intersection point glow */}
             <circle 
               cx={selectedPoint.x} 
               cy={selectedPoint.y} 
-              r="7" 
-              fill={color} 
+              r="6" 
+              fill="#FFFFFF" 
               fillOpacity="0.3" 
             />
             <circle 
               cx={selectedPoint.x} 
               cy={selectedPoint.y} 
-              r="4" 
-              fill={color} 
-              stroke="white" 
+              r="3" 
+              fill="#FFFFFF" 
+              stroke="#0B0B0B" 
               strokeWidth="1.5" 
             />
           </>
@@ -186,7 +173,7 @@ export const AreaChart = ({ data = [], height = 300, color = '#6366f1' }) => {
       {/* Floating HTML Tooltip */}
       {selectedPoint && (
         <div 
-          className="absolute z-10 p-2.5 rounded-lg glass-panel text-xs pointer-events-none shadow-xl border border-white/10"
+          className="absolute z-10 p-2.5 rounded-lg glass-panel text-xs pointer-events-none shadow-xl border border-white/5"
           style={{
             left: Math.min(containerWidth - 140, Math.max(10, selectedPoint.x - 70)),
             top: Math.max(10, selectedPoint.y - 65)
@@ -259,7 +246,7 @@ export const CandlestickChart = ({ data = [], height = 300 }) => {
 
         {data.map((item, index) => {
           const isGreen = item.close >= item.open;
-          const strokeColor = isGreen ? '#10b981' : '#f43f5e';
+          const strokeColor = isGreen ? '#D4FFD6' : '#FFB5B5';
           
           const x = index * candleSpacing + candleSpacing / 2;
           const yHigh = getCoordinates(item.high);
@@ -273,7 +260,7 @@ export const CandlestickChart = ({ data = [], height = 300 }) => {
           return (
             <g key={index}>
               {/* Wick */}
-              <line x1={x} y1={yHigh} x2={x} y2={yLow} stroke={strokeColor} strokeWidth="1.5" />
+              <line x1={x} y1={yHigh} x2={x} y2={yLow} stroke={strokeColor} strokeWidth="1" />
               {/* Body */}
               <rect
                 x={x - candleWidth / 2}
@@ -282,7 +269,7 @@ export const CandlestickChart = ({ data = [], height = 300 }) => {
                 height={rectHeight}
                 fill={isGreen ? strokeColor : 'none'}
                 stroke={strokeColor}
-                strokeWidth={isGreen ? '0' : '1.5'}
+                strokeWidth={isGreen ? '0' : '1'}
                 rx="1"
               />
             </g>
@@ -294,10 +281,10 @@ export const CandlestickChart = ({ data = [], height = 300 }) => {
       {hoverData && (
         <div className="absolute top-2 left-2 z-10 glass-panel p-2 rounded flex gap-4 text-[10px] text-slate-300 font-mono border border-white/5">
           <div>DATE: <span className="text-white">{hoverData.label}</span></div>
-          <div>OPEN: <span className={hoverData.close >= hoverData.open ? "text-emerald-500" : "text-rose-500"}>${hoverData.open.toFixed(2)}</span></div>
+          <div>OPEN: <span className={hoverData.close >= hoverData.open ? "text-emerald-400" : "text-rose-300"}>${hoverData.open.toFixed(2)}</span></div>
           <div>HIGH: <span className="text-white">${hoverData.high.toFixed(2)}</span></div>
           <div>LOW: <span className="text-white">${hoverData.low.toFixed(2)}</span></div>
-          <div>CLOSE: <span className={hoverData.close >= hoverData.open ? "text-emerald-500" : "text-rose-500"}>${hoverData.close.toFixed(2)}</span></div>
+          <div>CLOSE: <span className={hoverData.close >= hoverData.open ? "text-emerald-400" : "text-rose-300"}>${hoverData.close.toFixed(2)}</span></div>
         </div>
       )}
     </div>
@@ -308,7 +295,8 @@ export const CandlestickChart = ({ data = [], height = 300 }) => {
 export const PortfolioAllocationChart = ({ holdings = [], size = 200 }) => {
   if (holdings.length === 0) return <div className="text-slate-500">No holdings</div>;
 
-  const colors = ['#6366f1', '#10b981', '#06b6d4', '#f59e0b', '#8b5cf6', '#ec4899', '#3b82f6'];
+  // Monochrome tones for segment slices (White, Silver, Greys)
+  const colors = ['#FFFFFF', '#E5E5E5', '#CCCCCC', '#B3B3B3', '#999999', '#808080', '#666666'];
   const radius = size * 0.35;
   const strokeWidth = size * 0.08;
   const center = size / 2;

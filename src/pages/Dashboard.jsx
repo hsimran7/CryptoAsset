@@ -94,18 +94,18 @@ export default function Dashboard() {
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
               {t('netPortfolioValue')}
               {mode === 'beginner' && (
-                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="The combined USD value of all your holdings and cash.">
+                <span className="cursor-help text-slate-400 font-normal normal-case text-[9px]" title="The combined USD value of all your holdings and cash.">
                   (?)
                 </span>
               )}
             </span>
             <h3 className="text-xl font-bold text-white font-mono">${liveNetWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
-            <span className={`text-[10px] font-bold flex items-center ${livePnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <span className={`text-[10px] font-bold flex items-center ${livePnL >= 0 ? 'text-accent-emerald' : 'text-accent-rose'}`}>
               {livePnL >= 0 ? <TrendingUp className="w-3.5 h-3.5 mr-0.5" /> : <TrendingDown className="w-3.5 h-3.5 mr-0.5" />}
               <span>{livePnL >= 0 ? '+' : ''}{livePnLPct.toFixed(2)}% (ROI)</span>
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-indigo-600/10 text-indigo-400 border border-indigo-500/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
             <DollarSign className="w-5.5 h-5.5" />
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function Dashboard() {
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
               Available Balance
               {mode === 'beginner' && (
-                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="The amount of USD cash you have to trade.">
+                <span className="cursor-help text-slate-400 font-normal normal-case text-[9px]" title="The amount of USD cash you have to trade.">
                   (?)
                 </span>
               )}
@@ -124,7 +124,7 @@ export default function Dashboard() {
             <h3 className="text-xl font-bold text-white font-mono">${portfolio.cashUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
             <span className="text-[10px] text-slate-400 font-medium">USD Cash reserves</span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-emerald-600/10 text-emerald-400 border border-emerald-500/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
             <Briefcase className="w-5.5 h-5.5" />
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function Dashboard() {
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
               Active Price Alerts
               {mode === 'beginner' && (
-                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="Triggers that alert you when a coin price threshold is met.">
+                <span className="cursor-help text-slate-400 font-normal normal-case text-[9px]" title="Triggers that alert you when a coin price threshold is met.">
                   (?)
                 </span>
               )}
@@ -143,7 +143,7 @@ export default function Dashboard() {
             <h3 className="text-xl font-bold text-white font-mono">{activeAlerts}</h3>
             <span className="text-[10px] text-slate-400 font-medium">Monitoring thresholds</span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-amber-600/10 text-amber-400 border border-amber-500/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
             <Bell className="w-5.5 h-5.5" />
           </div>
         </div>
@@ -154,17 +154,17 @@ export default function Dashboard() {
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
               AI Buy/Sell Signals
               {mode === 'beginner' && (
-                <span className="cursor-help text-indigo-400 font-normal normal-case text-[9px]" title="Dynamic automated metrics suggesting purchase decisions.">
+                <span className="cursor-help text-slate-400 font-normal normal-case text-[9px]" title="Dynamic automated metrics suggesting purchase decisions.">
                   (?)
                 </span>
               )}
             </span>
             <h3 className="text-xl font-bold text-white font-mono">{recentAiSignals}</h3>
-            <span className="text-[10px] text-violet-400 font-bold flex items-center">
+            <span className="text-[10px] text-white font-bold flex items-center">
               <Sparkles className="w-3.5 h-3.5 mr-0.5" /> Recommended actions
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-violet-600/10 text-violet-400 border border-violet-500/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 flex items-center justify-center">
             <Sparkles className="w-5.5 h-5.5" />
           </div>
         </div>
@@ -192,9 +192,9 @@ export default function Dashboard() {
                 <button
                   key={interval}
                   onClick={() => setChartInterval(interval)}
-                  className={`px-3 py-1 rounded-md font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
                     chartInterval === interval 
-                      ? 'bg-indigo-600 text-white shadow' 
+                      ? 'bg-white text-black shadow' 
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -205,7 +205,7 @@ export default function Dashboard() {
           </div>
 
           <div className="pt-2">
-            <AreaChart data={MOCK_GROWTH_DATA} height={230} color="#6366f1" />
+            <AreaChart data={MOCK_GROWTH_DATA} height={230} color="#FFFFFF" />
           </div>
         </div>
 
@@ -213,27 +213,27 @@ export default function Dashboard() {
         <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-1">
             <h3 className="font-bold text-base text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-violet-400" /> AI Advisor Insights
+              <Sparkles className="w-4 h-4 text-white" /> AI Advisor Insights
             </h3>
             <p className="text-[11px] text-slate-400">Automated structural recommendations.</p>
           </div>
 
           <div className="space-y-3 flex-1 overflow-y-auto max-h-[190px] pt-1">
-            <div className="bg-white/5 p-3 rounded-lg border border-white/5">
-              <div className="flex items-center justify-between text-[10px] font-bold text-emerald-400 mb-1.5 uppercase">
+            <div className="bg-white/3 p-3 rounded-lg border border-white/5">
+              <div className="flex items-center justify-between text-[10px] font-bold text-accent-emerald mb-1.5 uppercase">
                 <span>Solana Rebalance Target</span>
-                <span className="bg-emerald-500/10 px-1 rounded">Moderate Buy</span>
+                <span className="bg-white/5 px-1.5 py-0.5 rounded border border-white/10">Moderate Buy</span>
               </div>
-              <p className="text-[11px] text-slate-300 leading-normal font-mono">
+              <p className="text-[11.5px] text-slate-300 leading-normal font-sans">
                 SOL shows bullish consolidation above $140. Accumulating 5% additional weight reduces Ethereum cross-exposure volatility.
               </p>
             </div>
-            <div className="bg-white/5 p-3 rounded-lg border border-white/5">
-              <div className="flex items-center justify-between text-[10px] font-bold text-amber-400 mb-1.5 uppercase">
+            <div className="bg-white/3 p-3 rounded-lg border border-white/5">
+              <div className="flex items-center justify-between text-[10px] font-bold text-slate-300 mb-1.5 uppercase">
                 <span>RSI Divergence: BTC</span>
-                <span className="bg-amber-500/10 px-1 rounded">Hold Alert</span>
+                <span className="bg-white/5 px-1.5 py-0.5 rounded border border-white/10">Hold Alert</span>
               </div>
-              <p className="text-[11px] text-slate-300 leading-normal font-mono">
+              <p className="text-[11.5px] text-slate-300 leading-normal font-sans">
                 RSI has reached 68 on daily limits. Suggesting locking short-term profits or placing trailing alert brackets at $65.8k.
               </p>
             </div>
@@ -249,7 +249,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* TOP GAINERS */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 space-y-3.5">
-          <h3 className="font-bold text-xs text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+          <h3 className="font-bold text-xs text-accent-emerald uppercase tracking-wider flex items-center gap-1.5">
             <TrendingUp className="w-4 h-4" /> Top 3 Gainers
           </h3>
           <div className="space-y-2.5">
@@ -269,7 +269,7 @@ export default function Dashboard() {
                     <span className={`font-semibold text-slate-200 text-xs font-mono transition-all ${flashClass}`}>
                       ${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
-                    <span className="text-[10px] font-bold text-emerald-400 flex items-center">
+                    <span className="text-[10px] font-bold text-accent-emerald flex items-center font-mono">
                       <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> +{coin.change24h.toFixed(2)}%
                     </span>
                   </div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
 
         {/* TOP LOSERS */}
         <div className="glass-panel rounded-xl border border-white/5 p-4.5 space-y-3.5">
-          <h3 className="font-bold text-xs text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+          <h3 className="font-bold text-xs text-accent-rose uppercase tracking-wider flex items-center gap-1.5">
             <TrendingDown className="w-4 h-4" /> Top 3 Losers
           </h3>
           <div className="space-y-2.5">
@@ -301,7 +301,7 @@ export default function Dashboard() {
                     <span className={`font-semibold text-slate-200 text-xs font-mono transition-all ${flashClass}`}>
                       ${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
-                    <span className="text-[10px] font-bold text-rose-400 flex items-center">
+                    <span className="text-[10px] font-bold text-accent-rose flex items-center font-mono">
                       <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" /> {coin.change24h.toFixed(2)}%
                     </span>
                   </div>

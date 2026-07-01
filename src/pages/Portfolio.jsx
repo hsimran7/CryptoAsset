@@ -287,7 +287,7 @@ export default function Portfolio() {
 
       {isLoading && assets.length === 0 ? (
         <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-white animate-spin" />
           <p className="text-slate-400 text-xs">Querying asset balances and live prices...</p>
         </div>
       ) : (
@@ -311,10 +311,10 @@ export default function Portfolio() {
             {/* Total Profit/Loss */}
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total Profit / Loss</span>
-              <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                 {isProfit ? '+' : ''}${liveTotalProfitValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </h2>
-              <span className={`text-[10px] font-bold flex items-center gap-1 mt-1 ${isProfit ? 'text-emerald-500' : 'text-rose-500'}`}>
+              <span className={`text-[10px] font-bold flex items-center gap-1 mt-1 ${isProfit ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                 {isProfit ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                 <span>{isProfit ? 'Bullish gain' : 'Net drawdown'}</span>
               </span>
@@ -323,7 +323,7 @@ export default function Portfolio() {
             {/* ROI */}
             <div className="glass-panel rounded-xl border border-white/5 p-5 flex flex-col justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">ROI Percentage</span>
-              <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <h2 className={`text-2xl font-extrabold font-mono mt-1.5 ${isProfit ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                 {isProfit ? '+' : ''}{liveTotalRoi.toFixed(2)}%
               </h2>
               <span className="text-[10px] text-slate-400 mt-1 block">Return on Investment</span>
@@ -442,7 +442,7 @@ export default function Portfolio() {
                               ${a.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </span>
                           </td>
-                          <td className={`py-3.5 text-right font-bold ${isProfitVal ? 'text-emerald-500' : 'text-rose-500'}`}>
+                          <td className={`py-3.5 text-right font-bold ${isProfitVal ? 'text-accent-emerald' : 'text-accent-rose'}`}>
                             <div>{isProfitVal ? '+' : ''}${a.profitValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                             <div className="text-[10px]">{isProfitVal ? '+' : ''}{a.roi.toFixed(2)}%</div>
                           </td>
@@ -475,7 +475,7 @@ export default function Portfolio() {
 
       {/* Add Asset Modal */}
       {isAddOpen && (
-        <div className="fixed inset-0 bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-[18px] flex items-center justify-center p-4 z-50">
           <div className="w-full max-w-md glass-panel rounded-2xl border border-white/10 p-6 space-y-4 shadow-3xl text-left">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="font-bold text-lg text-white">Add Asset Purchase</h3>
@@ -572,7 +572,7 @@ export default function Portfolio() {
 
       {/* Edit Asset Modal */}
       {isEditOpen && (
-        <div className="fixed inset-0 bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-[18px] flex items-center justify-center p-4 z-50">
           <div className="w-full max-w-md glass-panel rounded-2xl border border-white/10 p-6 space-y-4 shadow-3xl text-left">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <div>
