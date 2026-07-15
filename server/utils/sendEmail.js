@@ -47,13 +47,7 @@ export const sendEmail = async (options) => {
     console.log(`[Email Service] Message sent successfully: ${info.messageId}`);
     return { success: true, info };
   } catch (error) {
-    console.error('[Email Service Error] Failed to send email via SMTP. Falling back to console log.');
-    console.log('\n=================== [DEVELOPMENT EMAIL FALLBACK - SMTP FAILED] ===================');
-    console.log(`TO:       ${options.email}`);
-    console.log(`SUBJECT:  ${options.subject}`);
-    console.log('-------------------------------------------------------------------');
-    console.log(options.message);
-    console.log('====================================================================\n');
-    return { success: true, loggedToConsole: true, error: error.message };
+    console.error(`[Email Service Error] Failed to send email via SMTP: ${error.message}`);
+    throw error;
   }
 };

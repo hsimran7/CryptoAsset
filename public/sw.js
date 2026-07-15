@@ -34,6 +34,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event - Routing strategy
 self.addEventListener('fetch', (event) => {
+  // Only handle HTTP/HTTPS schemes to prevent extensions or chrome-extension errors
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   const reqUrl = new URL(event.request.url);
 
   // Bypass API requests and socket streams to prevent cache corruption
@@ -44,7 +49,8 @@ self.addEventListener('fetch', (event) => {
   // Intercept Navigation requests (HTML pages)
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => {
+      fetch(event.request).catch((err) => {
+        console.warn('[Service Worker] Navigation fetch failed, serving offline shell:', err);
         return caches.match('/offline.html');
       })
     );
@@ -76,6 +82,10 @@ self.addEventListener('fetch', (event) => {
         });
 
         return response;
+      }).catch((err) => {
+        console.warn('[Service Worker] Asset fetch failed:', event.request.url, err);
+        // Fall back gracefully instead of throwing unhandled promise rejections
+        return new Response('Network error occurred', { status: 480, headers: { 'Content-Type': 'text/plain' } });
       });
     })
   );

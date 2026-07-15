@@ -157,17 +157,21 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
       {/* User Status Bar */}
       {user && (
-        <div className="p-3.5 border-t border-white/5 bg-black/20 flex items-center justify-between">
-          <div className="flex items-center gap-3 overflow-hidden">
+        <div className={`p-4 border-t border-white/5 bg-black/20 flex items-center min-w-0 ${isExpanded ? 'justify-start' : 'justify-center'}`}>
+          <div className="flex items-center gap-3 min-w-0 w-full">
             <img 
               src={user.avatar} 
               alt="avatar" 
-              className="w-7.5 h-7.5 rounded-full border border-white/10" 
+              className="w-10 h-10 rounded-full border border-white/10 flex-shrink-0 object-cover" 
             />
             {isExpanded && (
-              <div className="flex flex-col text-left overflow-hidden">
-                <span className="text-xs font-semibold text-white truncate">{user.username}</span>
-                <span className="text-[9px] text-slate-500 truncate capitalize">{user.role.toLowerCase()}</span>
+              <div className="flex flex-col text-left min-w-0 flex-1 justify-center">
+                <span className="text-xs font-semibold text-white truncate block">
+                  {user.name || user.username}
+                </span>
+                <span className="text-[10px] text-slate-500 truncate block">
+                  {user.email}
+                </span>
               </div>
             )}
           </div>

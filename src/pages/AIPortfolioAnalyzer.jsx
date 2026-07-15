@@ -17,10 +17,10 @@ import {
   Layers
 } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const API = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 
 /* ─── helpers ─────────────────────────────────────────── */
-const getToken = () => localStorage.getItem('token');
+const getToken = () => localStorage.getItem('cv_token');
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n);

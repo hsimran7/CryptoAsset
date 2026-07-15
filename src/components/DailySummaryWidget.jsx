@@ -7,8 +7,8 @@ import {
   BookOpen, Terminal
 } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
-const getToken = () => localStorage.getItem('token');
+const API = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
+const getToken = () => localStorage.getItem('cv_token');
 
 /* ─── Sentiment badge ─────────────────────────────────── */
 function SentimentBadge({ sentiment, small = false }) {
@@ -141,7 +141,7 @@ export default function DailySummaryWidget() {
             <div>
               <p className="text-xs font-bold text-white">AI Daily Market Summary</p>
               <p className="text-[10px] text-slate-500 font-mono">
-                {new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                {data.generatedAt ? new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today'}
                 {' · '}
                 <span className={`font-bold ${data.overallSentiment === 'Positive' ? 'text-accent-emerald' : data.overallSentiment === 'Negative' ? 'text-accent-rose' : 'text-slate-400'}`}>
                   {data.overallSentiment} Sentiment

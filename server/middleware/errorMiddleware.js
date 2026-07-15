@@ -27,7 +27,8 @@ export const errorHandler = (err, req, res, _next) => {
   if (err.code === 11000) {
     statusCode = 400;
     const fieldName = Object.keys(err.keyValue || {})[0] || 'field';
-    message = `Duplicate resource collision: '${fieldName}' already exists`;
+    const fieldDisplayName = fieldName === 'email' ? 'Email address' : fieldName === 'username' ? 'Username' : fieldName;
+    message = `${fieldDisplayName} is already in use. Please choose another one.`;
   }
 
   // Handle Mongoose document validation failures

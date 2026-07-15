@@ -67,6 +67,8 @@ app.use('/api/coins', coinRoutes);
 app.use('/api/v1/coins', coinRoutes);
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api', healthRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/v1/watchlist', watchlistRoutes);
 app.use('/api/v1/portfolio', portfolioRoutes);
 app.use('/api/portfolio', assetPortfolioRoutes);

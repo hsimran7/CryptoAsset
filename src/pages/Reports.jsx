@@ -7,8 +7,8 @@ import {
   RefreshCw, Info
 } from 'lucide-react';
 
-const API   = 'http://localhost:5000/api';
-const token = () => localStorage.getItem('token');
+const API   = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
+const token = () => localStorage.getItem('cv_token');
 
 const fmt     = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0);
 const fmtCpct = (n) => `${(n || 0) >= 0 ? '+' : ''}${parseFloat(n || 0).toFixed(2)}%`;

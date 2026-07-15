@@ -27,6 +27,7 @@ const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 
 // Auth & Route Protection
 import { ProtectedRoute, AdminRoute } from './components/AuthRoutes';
+import ErrorBoundary from './components/ErrorBoundary';
 const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 const VerifyEmail = React.lazy(() => import('./pages/VerifyEmail'));
@@ -158,7 +159,9 @@ function LayoutWrapper({ children }) {
               className="w-full h-full"
             >
               <Suspense fallback={<RouteLoadingSpinner />}>
-                {children}
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
               </Suspense>
             </motion.div>
           </AnimatePresence>
